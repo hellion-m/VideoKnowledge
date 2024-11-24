@@ -1,0 +1,442 @@
+
+@media (min-width: 768px) {
+    html {
+        font-size: 16px;
+    }
+}
+
+html {
+    position: relative;
+    min-height: 100%;
+    font-size: 14px;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
+    position: relative;
+}
+
+main {
+    padding-bottom: 30px;  /*Adeguato all'altezza del footer */
+}
+
+.footer {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    height: 80px; 
+    /*Altezza del footer*/
+    background-color: #f8f9fa;
+   /* padding: 20px 0;*/
+    text-align: center;
+}
+/*html, body {
+    height: 100%;
+    margin: 0;
+}*/
+/*.container {
+    min-height: calc(100vh - 80px);*/ /* Assicura che il contenuto non venga coperto */
+/*}*/
+/*.footer {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background-color: #f8f9fa;
+    text-align: center;
+    padding: 10px;
+    display: none;*/ /* Inizialmente nascosto per un comportamento dinamico */
+    /*z-index: 1000;
+}*/
+
+/* Altre regole CSS */
+
+
+/*.footer {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    display: none;*/ /* Inizialmente nascosto */
+    /*background-color: #f8f9fa;*/ /* Adatta questo colore come necessario */
+    /*text-align: center;
+    padding: 10px;
+}*/
+
+/*main {
+    padding-bottom: 100px;*/ /* Assicurati che questo valore sia sufficiente per il footer */
+/*}*/
+
+#videoplay {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    min-width: 100%;
+    min-height: 100%;
+    width: auto;
+    height: auto;
+    z-index: 100;
+    -ms-transform: translateX(-50%) translateY(-50%);
+    -moz-transform: translateX(-50%) translateY(-50%);
+    -webkit-transform: translateX(-50%) translateY(-50%);
+    transform: translateX(-50%) translateY(-50%);
+    z-index: 300;
+}
+
+#coverLoad {
+    top: 10%;
+}
+
+.button-container {
+    display: flex;
+    gap: 10px;
+}
+
+.btn {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.2s;
+}
+
+.back-btn {
+    background-color: #007BFF;
+    color: white;
+}
+
+    .back-btn:hover {
+        background-color: #0056b3;
+    }
+
+.edit-btn {
+    background-color: #28A745;
+    color: white;
+}
+
+    .edit-btn:hover {
+        background-color: #1e7e34;
+    }
+
+.btn:active {
+    transform: scale(0.95);
+}
+
+.search-form {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 20px; /* Spazio tra il form di ricerca e la tabella */
+}
+
+.search-input {
+    width: 400px;
+    height: 38px; /* Assicurati che l'altezza corrisponda a quella del bottone */
+    padding: 5px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 20px; /* Bordi arrotondati */
+    margin-right: 10px; /* Spazio tra il campo di input e il bottone */
+    box-sizing: border-box;
+}
+
+.search-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 38px; /* Assicurati che l'altezza corrisponda a quella del campo di input */
+    padding: 0 15px;
+    border-radius: 20px; /* Bordi arrotondati */
+    background-color: #007bff;
+    border: 1px solid #007bff;
+    color: white;
+    cursor: pointer;
+}
+
+    .search-button:hover {
+        background-color: #0056b3;
+        border-color: #0056b3;
+    }
+
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    height: 38px; /* Imposta un'altezza comune */
+    padding: 0 15px; /* Padding uniforme */
+    font-size: 1rem;
+    font-weight: 400;
+    text-align: center;
+    border: 1px solid transparent;
+    border-radius: 0.25rem;
+    cursor: pointer;
+    box-sizing: border-box;
+    transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+
+.btn-primary {
+    background-color: #007bff;
+    border-color: #007bff;
+    color: white;
+}
+
+    .btn-primary:hover {
+        background-color: #0056b3;
+        border-color: #0056b3;
+    }
+
+
+.card {
+    border-radius: 15px; /* Bordi arrotondati */
+    overflow: hidden; /* Assicura che il contenuto non esca dai bordi arrotondati */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Aggiunge un'ombra per l'effetto di elevazione */
+    max-width: 100%; /* Riduce leggermente la larghezza della card */
+    height: 40%; /* Riduce l'altezza della card della metà */
+}
+
+.card-title {
+    font-weight: bold;
+    font-size: 1.25rem; /* Dimensione del testo del titolo */
+}
+
+.card img {
+    max-width: 100%;
+    max-height : 100px;
+    height: auto;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    border-radius: 10px; /* Bordi arrotondati per l'immagine */
+}
+
+.btn-play {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    height: 38px; /* Imposta un'altezza comune */
+    padding: 0 15px; /* Padding uniforme */
+    font-size: 1rem;
+    font-weight: 400;
+    text-align: center;
+    border: 1px solid transparent;
+    border-radius: 0.25rem;
+    cursor: pointer;
+    box-sizing: border-box;
+    transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+    background-color: #ffa500; /* Colore arancione */
+    border-color: #ffa500;
+    color: white;
+}
+
+    .btn-play:hover {
+        background-color: #e59400; /* Colore più scuro per hover */
+        border-color: #e59400;
+        color: white;
+    }
+
+/*.btn-addList {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    height: 38px;*/ /* Imposta un'altezza comune */
+    /*padding: 0 15px;*/ /* Padding uniforme */
+    /*font-size: 1rem;
+    font-weight: 400;
+    text-align: center;
+    border: 1px solid transparent;
+    border-radius: 0.25rem;
+    cursor: pointer;
+    box-sizing: border-box;
+    transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+    background-color: #00B38F;
+    border-color: #00B38F;
+    color: white;
+}*/
+
+    .btn-addList:hover {
+        background-color: #005761;
+        border-color: #005761;
+        color: white;
+    }
+
+#quiz-container {
+    position: fixed; /* Cambia da absolute a fixed per fissarlo rispetto alla finestra del browser */
+    top: 0; /* Posiziona il contenitore in alto */
+    left: 0; /* Posiziona il contenitore a sinistra */
+    width: 100vw; /* Imposta la larghezza al 100% della larghezza della finestra */
+    height: 100vh; /* Imposta l'altezza al 100% dell'altezza della finestra */
+    background-color: #fff;
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    text-align: center;
+    z-index: 1000;
+    overflow-y: auto; /* Aggiungi lo scroll se il contenuto supera l'altezza della finestra */
+    box-sizing: border-box; /* Include padding e border nella larghezza e altezza totale */
+}
+
+.timer {
+    position: fixed;
+    top: 10px;
+    right: 10px;
+    background-color: #007bff;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 5px;
+    font-size: 1.5rem;
+    font-weight: bold;
+    z-index: 1000;
+}
+
+.img-fluid {
+    max-width: 100%;
+    height: auto;
+}
+
+.preview-image, .preview-video {
+    max-height: 200px; /* Imposta l'altezza massima a 250px */
+    width: auto; /* Mantiene le proporzioni */
+    max-width: 180px;
+    object-fit: cover; /* Assicura che l'immagine o il video si adatti senza distorcersi */
+    display: block;
+    margin: auto; /* Centra l'elemento */
+}
+
+.preview-video {
+    width: 100%; /* Assicura che il video riempia il contenitore */
+    pointer-events: none; /* Disabilita l'interazione con il video */
+    margin: auto; /* Centra l'elemento */
+}
+
+.btn-addList {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    height: 38px; /* Altezza comune */
+    padding: 0 15px; /* Padding uniforme */
+    font-size: 1rem;
+    font-weight: 400;
+    text-align: center;
+    border: 1px solid transparent;
+    border-radius: 0.25rem;
+    cursor: pointer;
+    box-sizing: border-box;
+    transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+    background-color: #00B38F;
+    border-color: #00B38F;
+    color: white;
+    /* Aggiungi queste righe */
+    vertical-align: top; /* Allinea verticalmente al centro */
+    /*line-height: 1;*/ /* Imposta l'altezza della linea */
+    margin: 0; /* Elimina margini aggiuntivi */
+}
+a.btn.btn-addList {
+    vertical-align: top;
+    /*line-height: 1;*/
+}
+.mt-2 {
+    margin-top: 0.1rem;  //Cambia il margine superiore 
+}
+
+
+
+
+.description-column {
+    max-width: 150px; /* Limita la larghezza della colonna */
+    /*white-space: nowrap;*/ /* Impedisce al testo di andare a capo */
+    overflow: hidden; /* Nasconde il testo che supera la larghezza */
+    text-overflow: ellipsis; /* Mostra "..." alla fine del testo troncato */
+}
+
+.description-popup {
+    display: none;
+    position: absolute;
+    max-width: 300px;
+    padding: 10px;
+    background-color: #fff;
+    border: 1px solid #ccc;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+    font-size: 14px;
+    color: #333;
+}
+
+
+
+
+/*#local-video {
+    position: relative !important;
+    z-index: 999 !important;
+    display: block !important;
+}*/
+
+
+
+
+
+
+
+
+
+
+/* Create two unequal columns that use flexbox for layout */
+/*.row {
+    display: flex;
+}
+
+.column {
+    padding: 10px;
+}*/
+
+/* Flex items: growable and shrinkable */
+/*.left {
+    flex: 0 0 40%;*/ /* flex-grow: 0; flex-shrink: 0; flex-basis: 40%; */
+/*}
+
+.right {
+    flex: 1;*/ /* flex-grow: 1; flex-shrink: 1; flex-basis: auto; */
+/*}*/
+
+
+
+
+
+
+
+/*.preview-image, .preview-video {
+    max-height: 200px;*/ /* Imposta l'altezza massima */
+    /*width: auto;*/ /* Mantiene le proporzioni */
+    /*object-fit: cover;*/ /* Fa in modo che l'immagine si adatti senza distorcersi */
+/*}
+
+.preview-video {
+    width: 100%;*/ /* Per assicurarsi che il video si ridimensioni correttamente */
+/*}*/
+
+/*.btn-play {
+    background-color: #ffa500;*/ /* Colore arancione */
+/*border-color: #ffa500;
+    color: white;
+}
+
+    .btn-play:hover {
+        background-color: #e59400;*/ /* Colore più scuro per hover */
+/*border-color: #e59400;
+        color: white;
+    }
+
+
+.btn-addList {
+    background-color: #00B38F;*/ /* Colore verde strano */
+/*border-color: #00B38F;
+    color: white;
+}
+
+.btn-addList:hover {
+    background-color: #005761;*/ /* Colore più scuro per hover */
+/*border-color: #005761;
+    color: white;
+}*/

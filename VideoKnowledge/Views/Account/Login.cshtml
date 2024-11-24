@@ -1,0 +1,54 @@
+﻿@model LoginViewModel
+
+@{
+    // Imposta il titolo della pagina, che verrà visualizzato nel tag <title> della pagina HTML.
+    ViewData["Title"] = "Login";
+}
+
+<h1>Login</h1>
+<!-- Titolo della pagina, che indica l'azione di login dell'utente. -->
+
+<hr />
+<!-- Linea orizzontale che separa il titolo dalla form, migliorando la leggibilità. -->
+
+<div class="row">
+    <div class="col-12">
+        <!-- Contenitore principale per la form di login, che occupa tutta la larghezza disponibile (col-12). -->
+        <form asp-action="Login">
+            <!-- La form invia una richiesta HTTP POST all'azione 'Login' del controller. -->
+
+            <div asp-validation-summary="All" class="text-danger"></div>
+            <!-- Visualizza un riepilogo degli errori di validazione per tutta la form, se presenti, con un messaggio di errore in rosso. -->
+            <!-- Inizio del gruppo di campi per la validazione e l'inserimento del nome utente -->
+            <div class="form-group">
+                <!-- Etichetta per il campo 'UserName'. L'attributo 'asp-for' lega l'etichetta al modello 'LoginViewModel' e alla proprietà 'UserName'. -->
+                <label asp-for="UserName" class="control-label"></label>
+
+                <!-- Campo di input per il nome utente. L'attributo 'asp-for' lega l'input alla proprietà 'UserName' del modello. -->
+                <input asp-for="UserName" class="form-control" />
+                <!-- Visualizzazione degli errori di validazione per il campo 'UserName', se presenti, con un messaggio di errore in rosso. -->
+                <span asp-validation-for="UserName" class="text-danger"></span>
+            </div>
+
+            <!-- Inizio del gruppo di campi per la validazione e l'inserimento della password -->
+            <div class="form-group">
+                <!-- Etichetta per il campo 'Password' -->
+                <label asp-for="Password" class="control-label"></label>
+
+                <!-- Campo di input per la password -->
+                <input asp-for="Password" class="form-control" type="password" />
+                <!-- Visualizzazione degli errori di validazione per il campo 'Password', se presenti. -->
+                <span asp-validation-for="Password" class="text-danger"></span>
+            </div>
+
+            <!-- Campo nascosto per la gestione dell'URL di ritorno, utile per il reindirizzamento dopo il login -->
+            <input type="hidden" asp-for="ReturnUrl" />
+
+            <!-- Inizio del gruppo di bottoni per inviare la form -->
+            <div class="form-group">
+                <!-- Bottone per inviare la form e tentare il login dell'utente -->
+                <button class="btn btn-primary mt-2">Log in</button>
+            </div>
+        </form>
+    </div>
+</div>

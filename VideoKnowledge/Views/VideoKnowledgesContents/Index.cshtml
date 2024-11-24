@@ -1,0 +1,67 @@
+﻿<div class="row">
+
+    <!--
+        Questa sezione itera attraverso gli elementi del modello (Model), che rappresentano
+        i contenuti VideoKnowledge. Ogni elemento viene rappresentato come una card con titolo,
+        immagine, descrizione, e due pulsanti: uno per riprodurre il contenuto e uno per aggiungerlo
+        alla lista personale.
+    -->
+    @foreach (var item in Model)
+    {
+        <div class="col-md-3 mb-4">
+            <!-- Layout delle card: 4 card per riga -->
+            <div class="card h-100">
+                <!-- Corpo della card -->
+                <div class="card-body d-flex flex-column">
+                    <!-- Titolo della card -->
+                    <h4 class="card-title font-weight-bold text-center">@item.Name</h4>
+
+                    <!-- Immagine del contenuto -->
+                    <div class="text-center">
+                        <img src="/media/imagesOfKnowledges/@item.Image"
+                             class="img-fluid rounded"
+                             width="90"
+                             height="90"
+                             alt="" /> <!-- Immagine centrata e ridimensionata -->
+                    </div>
+
+                    <!-- Descrizione del contenuto -->
+                    <div class="mt-3 text-center">
+                        <p class="description-text">@Html.Raw(item.Description)</p>
+                    </div>
+
+                    <!-- Pulsanti di azione -->
+                    <div class="mt-auto text-center">
+                        <!-- Pulsante "Play" per riprodurre il contenuto -->
+                        <a class="btn btn-play mt-2"
+                           asp-area="Admin"
+                           asp-action="Player"
+                           asp-route-id="@item.Id">Play</a>
+
+                        <!-- Pulsante "Add to My List" per aggiungere il contenuto alla lista personale -->
+                        <a class="btn btn-addList mt-2"
+                           asp-controller="MyList"
+                           asp-action="Add"
+                           asp-route-id="@item.Id">Add to my list</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+
+    <!--
+        Paginazione: Se ci sono più pagine di contenuti, mostra un controllo di navigazione
+        al centro della pagina. Utilizza il componente di paginazione con parametri dinamici
+        passati tramite ViewBag.
+    -->
+    @if (ViewBag.TotalPages > 1)
+    {
+        <div class="d-flex w-100 justify-content-center">
+            <pagination page-count="@ViewBag.TotalPages"
+                        page-target="/VideoKnowledgesContents/@ViewBag.CategorySlug"
+                        page-number="@ViewBag.PageNumber"
+                        page-range="@ViewBag.PageRange">
+            </pagination>
+        </div>
+    }
+</div>

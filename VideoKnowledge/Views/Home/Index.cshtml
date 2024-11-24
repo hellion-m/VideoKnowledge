@@ -1,0 +1,116 @@
+﻿
+@*Il modello passato alla vista è una lista (enumerazione) di oggetti 'VideoKnowledgeContent'.
+Ogni oggetto rappresenta un contenuto video relativo alla piattaforma VideoKnowledge. *@
+
+@model IEnumerable<VideoKnowledge.Models.VideoKnowledgeContent>
+
+@{
+    // Imposta il titolo della pagina che verrà visualizzato nel tag <title> della pagina HTML.
+    ViewData["Title"] = "Home Page";
+}
+
+<div class="text-center">
+    <!-- Sezione principale centrata, con un'intestazione e un modulo di ricerca. -->
+    <h1 class="display-4">Welcome to VideoKnowledge</h1> 
+    <br />
+    <br />
+
+    <!-- Form di ricerca per filtrare i contenuti video. -->
+    <!-- Quando l'utente inserisce una query e invia il modulo, la ricerca verrà eseguita tramite GET all'azione "Index" del controller "Home". -->
+    <form method="get" asp-action="Index" asp-controller="Home" class="search-form">
+        <input type="text" name="query" placeholder="Search..." required class="search-input">
+        <!-- Campo di input per la query di ricerca, contrassegnato come obbligatorio con "required". -->
+        <button class="btn btn-primary search-button" type="submit">Search</button>
+        <!-- Bottone per inviare il modulo di ricerca. -->
+    </form>
+</div>
+
+@if (Model != null && Model.Any())
+{
+    <!-- Verifica se il modello contiene dati (una lista di contenuti) -->
+    <!-- Se il modello non è nullo e contiene almeno un elemento, verrà mostrata una tabella con i contenuti. -->
+    <table class="table">
+        <thead>
+            <tr>
+                <!-- Intestazioni della tabella per ogni colonna -->
+                <th>Name</th>
+                <th>Description</th>
+                <th>Category</th>
+                <th>Image</th>
+                <th>VideoLink</th>
+                <th></th> <!-- Colonna per le azioni (Play, Add to list) -->
+            </tr>
+        </thead>
+
+        <tbody>
+            <!-- Corpo della tabella dove ogni riga rappresenta un contenuto video -->
+            @foreach (var item in Model)
+            {
+                <!-- Itera su ogni elemento nel modello per creare una riga per ciascun contenuto -->
+                <tr>
+                    <td>@item.Name</td>
+                    <!-- Mostra il nome del contenuto (campo 'Name' del modello) -->
+                    <td>@item.Description</td>
+                    <!-- Mostra la descrizione del contenuto (campo 'Description' del modello) -->
+                    <td>@item.Category.Name</td>
+                    <!-- Mostra la categoria del contenuto, con il nome della categoria associata -->
+                    <td>
+                         <!-- Mostra l'immagine di copertura del contenuto -->
+                         <img src="/media/imagesOfKnowledges/@item.Image" width="200" height="200" alt="" />
+                         <!-- L'immagine di copertura viene prelevata dalla directory '/media/imagesOfKnowledges' utilizzando il nome immagine contenuto nel modello -->
+                    </td>
+                    <td>
+                        <!-- Mostra anteprima del video se è presente un link al video -->
+                        @if (item.VideoLink != null)
+                        {
+                            <video id="myvid" controls class="preview-video">
+                                <!-- Se il contenuto ha un link video locale (VideoLink), mostra il video con un player HTML5 -->
+                                <source src="~/media/videosOfKnowledges/@item.VideoLink" type="video/mp4" alt="@item.Name" />
+                            </video>
+                        }
+                        else if (item.WebVideoLink != null)
+                        {
+                            <!-- Se il contenuto ha un link video esterno (WebVideoLink, ad esempio su Youtube o Vimeo), incorpora il video in un iframe -->
+                            <iframe id="videoPreview" class="preview-video" src="@item.WebVideoLink" frameborder="0"></iframe>
+                        }
+                    </td>
+                    <td>
+                        <!-- Pulsante per riprodurre il video utilizzando l'azione "Player" del controller "VideoKnowledgesContents" -->
+                        <a class="btn btn-play" asp-area="Admin" asp-controller="VideoKnowledgesContents" asp-action="Player" asp-route-id="@item.Id">Play</a>
+                        <!-- Il pulsante "Play" permette di visualizzare il video in modalità player esterna con il relativo ID -->
+                        <br /><br />
+                        <!-- Pulsante per aggiungere il video a una lista personalizzata tramite l'azione "Add" del controller "MyList" -->
+                        <a class="btn btn-primary" asp-controller="MyList" asp-action="Add" asp-route-id="@item.Id"> + list</a>
+                        <!-- Il pulsante "+ list" consente di aggiungere il contenuto a una lista personalizzata dell'utente -->
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+<!-- Stili CSS personalizzati per migliorare la visualizzazione dei video e iframe -->
+<style>
+    /* Stili per i contenuti video e iframe */
+    .video-wrapper, .iframe-wrapper {
+        position: relative;
+        display: inline-block;
+    }
+
+    .iframe-wrapper {
+        width: 300px;
+        height: 200px;
+    }
+
+    /* Overlay trasparente per impedire interazioni dirette con il video */
+    .overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(255, 255, 255, 0); /* Trasparente per bloccare clic diretti */
+        z-index: 1;
+    }
+</style>
+

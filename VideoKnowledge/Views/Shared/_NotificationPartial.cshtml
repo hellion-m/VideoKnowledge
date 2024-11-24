@@ -1,0 +1,17 @@
+﻿<!-- Verifica se TempData contiene un messaggio di successo -->
+@if (TempData["Success"] != null)
+{
+    <!-- Se presente, visualizza un div con classe 'alert-success' per indicare un messaggio di successo -->
+    <div class="alert alert-success notification">
+        <!-- Contenuto del messaggio di successo visualizzato all'utente -->
+        @TempData["Success"]
+    </div>
+}
+<!-- Verifica se TempData contiene un messaggio di errore -->
+@if (TempData["Error"] != null)
+{
+    <!-- Se presente, visualizza un div con classe 'alert-danger' per indicare un messaggio di errore -->
+    <div class="alert alert-danger notification">
+            @TempData["Error"]
+    </div>
+}

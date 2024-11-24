@@ -1,0 +1,153 @@
+﻿@model MyListViewModel
+
+@{
+    // Imposta il titolo della pagina per la vista corrente
+    ViewData["Title"] = "My VideoKnowledge List Overview";
+}
+
+<!--
+    Visualizza una panoramica della lista degli elementi di VideoKnowledge salvati dall'utente.
+    Se la lista contiene elementi, verrà mostrata una tabella con i dettagli, altrimenti un messaggio
+    informa l'utente che la lista è vuota.
+-->
+
+@if (Model.MyListItems.Count > 0)
+{
+    <table class="table">
+        <tr>
+            <th>Video Knowledge</th> <!-- Nome del contenuto VideoKnowledge -->
+            <th>Description</th> <!-- Descrizione dell'elemento -->
+            <th>Preview</th> <!-- Immagine di anteprima -->
+            <th></th> <!-- Colonna per azioni (es. Rimuovi elemento) -->
+        </tr>
+        @foreach (var item in Model.MyListItems)
+        {
+            <tr>
+                <td>@item.VdkItemName</td> <!-- Nome del contenuto -->
+                <td>@item.Description</td> <!-- Descrizione del contenuto -->
+                <td>
+                    <!-- Immagine dell'elemento -->
+                    <img src="/media/imagesOfKnowledges/@item.Image" width="150" height="150" alt="" />
+                </td>
+                <td>
+                    <!-- Bottone per rimuovere un elemento specifico dalla lista -->
+                    <a class="btn btn-danger btn-sm remove-btn" 
+                       asp-action="Remove" 
+                       asp-route-id="@item.VdkItemId">Remove</a>
+                </td>
+            </tr>
+        }
+    </table>
+
+    <!-- Pulsante per aggiungere gli elementi della lista ai preferiti -->
+    <button id="addToFavoritesBtn" class="btn btn-primary">Add to Favorites</button>
+    <!-- Pulsante per svuotare completamente la lista -->
+    <button id="clearAllBtn" class="btn btn-danger">Clear</button>
+}
+else
+{
+    <!-- Messaggio visualizzato quando la lista è vuota -->
+    <h3 class="display-4 text-center">Your list is empty.</h3>
+}
+
+<!-- Modale per mostrare messaggi di errore (es. quando l'utente non è autenticato) -->
+<div class="modal fade" id="errorMessageModal" tabindex="-1" role="dialog" aria-labelledby="errorMessageModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="errorMessageModalLabel">Join us</h5>
+                <!-- Pulsante per chiudere il modale -->
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <!-- Contenuto del messaggio di errore, modificato tramite JavaScript -->
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+<script>
+    $(document).ready(function () {
+        // Configura la modale per prevenire la chiusura cliccando fuori
+        $('#errorMessageModal').modal({
+            backdrop: 'static',
+            keyboard: true // Permette la chiusura usando il tasto ESC
+        });
+
+        // Pulsante per aggiungere gli elementi ai preferiti
+        $('#addToFavoritesBtn').click(function () {
+            // Serializza i dati della lista corrente
+            var myListItems = @Html.Raw(Json.Serialize(Model.MyListItems));
+
+            // Richiesta AJAX per aggiungere gli elementi ai preferiti
+            $.ajax({
+                type: "POST",
+                url: '@Url.Action("AddToFavorites", "MyList")',
+                data: JSON.stringify(myListItems),
+                contentType: "application/json",
+                success: function (response) {
+                    if (response.success) {
+                        alert('Items added to favorites successfully.');
+                        // Svuota la lista dopo l'aggiunta
+                        $.ajax({
+                            type: "POST",
+                            url: '@Url.Action("Clear", "MyList")',
+                            success: function (clearResponse) {
+                                if (clearResponse.success) {
+                                    $('.table').remove();
+                                    $('h3.display-4').text('Your list is empty.');
+                                    window.location.reload();
+                                } else {
+                                    alert('Failed to clear the list.');
+                                }
+                            },
+                            error: function () {
+                                alert('An error occurred while clearing the list.');
+                            }
+                        });
+                    } else {
+                        // Mostra messaggio di errore se l'utente non è autenticato
+                        if (response.message === "You need to be logged in to add items to favorites.") {
+                            $('#errorMessageModal .modal-body').html(response.message + 
+                                '<br><a href="@Url.Action("Create", "Account")" class="btn btn-primary mt-3">Register</a>' +
+                                '<a href="@Url.Action("Login", "Account")" class="btn btn-secondary mt-3 ml-2">Login</a>');
+                            $('#errorMessageModal').modal('show');
+                        } else {
+                            alert(response.message);
+                        }
+                    }
+                },
+                error: function () {
+                    alert('An error occurred while adding items to favorites.');
+                }
+            });
+        });
+
+        // Pulsante per svuotare la lista
+        $('#clearAllBtn').click(function() {
+            $.ajax({
+                type: "POST",
+                url: '@Url.Action("Clear", "MyList")',
+                success: function (clearResponse) {
+                    if (clearResponse.success) {
+                        $('.table').remove();
+                        $('h3.display-4').text('Your list is empty');
+                        window.location.reload();
+                    } else {
+                        alert('Failed to clear the list.');
+                    }
+                },
+                error: function () {
+                    alert('An error occurred while clearing the list.');
+                }
+            });
+        });
+    });
+</script>
+}

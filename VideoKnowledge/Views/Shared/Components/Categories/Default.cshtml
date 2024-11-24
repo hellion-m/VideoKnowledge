@@ -1,0 +1,38 @@
+﻿@model IEnumerable<Category>
+
+<!--
+    Questa vista mostra un elenco di categorie come una lista non ordinata, in cui ogni categoria è
+    rappresentata da un link. Ogni link porta alla pagina principale dei contenuti video
+    filtrati per la categoria selezionata.
+-->
+
+<ul class="list-group">
+    <!-- Elemento della lista per visualizzare tutti i contenuti senza filtro -->
+    <li class="list-group-item">
+        <!--
+            Link che reindirizza all'elenco completo dei contenuti
+            senza applicare alcun filtro di categoria.
+        -->
+        <a class="nav-link text-dark"
+           asp-area=""
+           asp-controller="VideoKnowledgesContents"
+           asp-action="Index"
+           asp-route-categorySlug="">All Contents</a>
+    </li>
+
+    <!-- Loop che itera su ogni elemento del modello per creare un link corrispondente a ciascuna categoria -->
+    @foreach (var item in Model)
+    {
+        <li class="list-group-item">
+            <!--
+                Link che reindirizza all'elenco dei contenuti filtrati per la categoria corrente.
+                La proprietà `Slug` viene passata come parametro nel route (asp-route-categorySlug).
+            -->
+            <a class="nav-link text-dark"
+               asp-area=""
+               asp-controller="VideoKnowledgesContents"
+               asp-action="Index"
+               asp-route-categorySlug="@item.Slug">@item.Name</a>
+        </li>
+    }
+</ul>

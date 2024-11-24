@@ -1,0 +1,137 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <!-- Meta tag e configurazione viewport per garantire la compatibilità con dispositivi mobili -->
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- Titolo della pagina dinamico ottenuto da ViewData -->
+    <title>@ViewData["Title"] - VideoKnowledge</title>
+    <!-- Collegamenti ai fogli di stile CSS, incluso Bootstrap per la struttura responsive e stili personalizzati -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/VideoKnowledge.styles.css" asp-append-version="true" />
+</head>
+<body>
+    <!-- Intestazione e barra di navigazione principale del sito -->
+    <header>
+        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
+            <div class="container-fluid">
+                 <!-- Link alla home page con nome del sito come logo -->
+                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">VideoKnowledge</a>
+                <!-- Bottone per aprire/chiudere il menu di navigazione su dispositivi mobili (toggle) -->
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
+                        aria-expanded="false" aria-label="Toggle navigation">
+                        <span class="navbar-toggler-icon"></span>
+                </button>
+                 <!-- Sezione di navigazione principale -->
+                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
+                    <ul class="navbar-nav flex-grow-1">
+                        <!-- Link alla pagina Home -->
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
+                        </li>
+                         <!-- Link alla pagina Privacy -->
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+                        </li>
+                    </ul>
+                     <!-- Sezione per i bottoni di autenticazione e accesso, allineata a destra -->
+                    <ul class="navbar-nav ms-auto">
+                         <!-- Verifica se l'utente è autenticato -->
+                        @if (User.Identity?.IsAuthenticated ?? false)
+                        {
+                            <!-- Link ai contenuti personalizzati dell'utente autenticato -->
+                            <li class="nav-item">
+                                <a class="btn btn-primary" asp-area="Admin" asp-controller="VideoKnowledgesContents" asp-action="Index"> My Video Knowledges Contents</a>
+                                &nbsp;
+                            </li>
+                            <li class="nav-item">
+                                <a class="btn btn-primary" asp-area="Admin" asp-controller="VideoKnowledgesContents" asp-action="FavoritesList"> My Favorites</a>
+                                &nbsp;
+                            </li>
+                            <li class="nav-item">
+                                <a class="btn btn-primary" asp-area="Admin" asp-controller="VideoKnowledgesQuestions" asp-action="UserQuizResults"> My Quiz History</a>
+                                &nbsp;
+                            </li>
+                            <!-- Pulsante di logout con saluto personalizzato -->
+                            <li class="nav-item">
+                                <a class="btn btn-danger" asp-area="" asp-controller="Account" asp-action="Logout">Hi, @User.Identity.Name, Log out</a>
+                            </li>   
+                        }
+                        else
+                        {
+                            <!-- Bottoni per login e registrazione se l'utente non è autenticato -->
+                            <li class="nav-item">
+                                <a class="btn btn-primary" asp-controller="Account" asp-action="Login">Log in</a>
+                                &nbsp;
+                            </li>
+                            <li class="nav-item">
+                                <a class="btn btn-play" asp-controller="Account" asp-action="Create">Create new account</a>
+                            </li>
+                        }
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+   <!-- Contenitore principale della pagina con contenuti divisi in colonne -->
+    <div class="container">
+        <main role="main" class="pb-3">
+            <div class="row">
+                <div class="col-2">
+                   <!-- Componenti personalizzati per la navigazione nelle categorie e visualizzazione della lista personale -->
+                    <vc:categories />
+                    <div class="bg-transparent mt-3 p-3 text-black">
+                        <vc:small-my-list />
+                    </div>
+                </div>
+                <div class="col">
+                     <!-- Include di un partial per notifiche e render del contenuto principale della vista -->
+                    <partial name="_NotificationPartial" />
+                    @RenderBody()
+                </div>
+            </div>
+        </main>
+    </div>
+    
+     <!-- Footer con informazioni di copyright e link alla pagina Privacy -->
+    <footer class="border-top footer text-muted">
+        <div class="container">
+            &copy; 2024 - VideoKnowledge - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+        </div>
+    </footer>
+
+    <!-- Includi script JavaScript necessari per il funzionamento della pagina -->
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    <!-- Sezione opzionale per script aggiuntivi definiti in altre viste -->
+    @await RenderSectionAsync("Scripts", required: false)
+    <!-- Script per la gestione della visibilità del footer basata sullo scroll -->
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        var footer = document.querySelector('.footer');
+        var footerHeight = footer.offsetHeight;
+
+        function checkScroll() {
+            var scrollHeight = document.documentElement.scrollHeight;
+            var scrollTop = window.scrollY + window.innerHeight;
+
+            // Controllo visibilità del footer: mostra quando raggiunge la parte inferiore
+            if (scrollTop >= scrollHeight - footerHeight) {
+                footer.style.display = 'block'; // Mostra il footer
+            } else {
+                footer.style.display = 'none'; // Nascondi il footer
+            }
+        }
+         // Evento scroll per gestire la visibilità dinamica del footer
+        window.addEventListener('scroll', checkScroll);
+        checkScroll();
+    });
+</script>
+
+</body>
+</html>

@@ -1,0 +1,24 @@
+﻿<!-- 
+    Inclusione delle librerie di validazione tramite jQuery. 
+    Queste librerie sono necessarie per abilitare la validazione lato client 
+    nei form ASP.NET MVC/Razor Pages.
+-->
+
+<!-- 
+    Inclusione della libreria di base di jQuery Validation.
+    Percorso: "~/lib/jquery-validation/dist/jquery.validate.min.js"
+    Descrizione: 
+    - Fornisce le funzionalità di validazione generali (es. regole di validazione, messaggi di errore).
+    - Garantisce il controllo e la gestione degli input nei form HTML.
+-->
+<script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+
+<!-- 
+    Inclusione della libreria per la validazione unobtrusive.
+    Percorso: "~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"
+    Descrizione: 
+    - Estende jQuery Validation per supportare l'attributo HTML5 "data-*".
+    - Facilita l'integrazione della validazione lato client con le regole definite nel server.
+    - Utilizzata in combinazione con attributi di annotazione dei dati (Data Annotations) sui modelli.
+-->
+<script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
