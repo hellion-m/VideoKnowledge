@@ -1,0 +1,219 @@
+﻿@model VideoKnowledge.Models.VideoKnowledgeContent
+
+@{
+    ViewData["Title"] = "Edit VideoKnowledge";
+    Layout = "_Layout"; 
+}
+
+<style>
+    /* Stile per il layout reattivo */
+    * { box-sizing: border-box; }
+
+    .column { float: left; padding: 10px; }
+    .left { width: 40%; }
+    .right { width: 60%; }
+    .row:after { content: ""; display: table; clear: both; }
+    .content-wrapper { padding-bottom: 60px; }
+</style>
+
+<div class="content-wrapper">
+    <h1>Edit VideoKnowledge</h1>
+
+    <div class="row">
+        <!-- Colonna Sinistra: Modulo per i dettagli del video -->
+        <div class="column left">
+            <h2>Details</h2>
+            <form asp-action="Edit" enctype="multipart/form-data">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <!-- Campi nascosti per immagine e link del video -->
+                <input type="hidden" asp-for="Image" />
+                <input type="hidden" asp-for="VideoLink" />
+
+                <!-- Campo Nome -->
+                <div class="form-group">
+                    <label asp-for="Name" class="control-label"></label>
+                    <input asp-for="Name" class="form-control" />
+                    <span asp-validation-for="Name" class="text-danger"></span>
+                </div>
+
+                <!-- Campo Descrizione -->
+                <div class="form-group">
+                    <label asp-for="Description" class="control-label"></label>
+                    <textarea asp-for="Description" class="form-control"></textarea>
+                    <span asp-validation-for="Description" class="text-danger"></span>
+                </div>
+                            
+                <!-- Selezione Categoria -->
+                <div class="form-group">
+                    <label>Categories</label>
+                    <select asp-for="CategoryId" class="form-control" asp-items="ViewBag.Categories">
+                        <option value="0">Choose a category</option>
+                    </select>
+                    <span asp-validation-for="CategoryId" class="text-danger"></span>
+                </div>
+
+                <!-- Caricamento Immagine -->
+                <div class="form-group">
+                    <label asp-for="Image" class="control-label"></label>
+                    <input asp-for="ImageUpload" class="form-control" />
+                    <br />
+                    <span asp-validation-for="ImageUpload" class="text-danger"></span>
+                    <label>Current Image</label>
+                    <br />
+                    <img src="/media/imagesOfKnowledges/@Model.Image" width="200" alt="" />
+                </div>
+
+                <!-- Caricamento Video -->
+                <div id="UpldVideo" class="form-group">
+                    <label asp-for="VideoLink" class="control-label"></label>
+                    <input asp-for="VideoUpload" class="form-control" id="VideoUpload" />
+                    <br />
+                </div>
+
+                <!-- Selezione Fonte Video -->
+                <div class="form-group">
+                    <label>Video Source</label>
+                    <select asp-for="VideoSource" class="form-control" asp-items="ViewBag.VideoSource" onchange="toggleVideoSource()">
+                        <option value="0">Select Video Source</option>
+                        <option value="1">Web</option>
+                        <option value="2">File Upload</option>
+                    </select>
+                    <span asp-validation-for="VideoSource" class="text-danger"></span>
+                </div>
+
+                <!-- Link Web del Video -->
+                <div id="UrlVideo" class="form-group">
+                    <label asp-for="WebVideoLink" class="control-label"></label>
+                    <input asp-for="WebVideoLink" class="form-control" id="WebVideoLink" />
+                    <span asp-validation-for="WebVideoLink" class="text-danger"></span>
+                </div>
+
+                <!-- Contenitore per l'anteprima video -->
+                <div id="videoContainer">
+                    <br />
+                    @if (Model.VideoSource == "2") {
+                        <video id="myvid" controls width="300">
+                            <source src="~/media/videosOfKnowledges/@Model.VideoLink" type="video/mp4" alt=""/>     
+                        </video>
+                    } else if (Model.VideoSource == "1") {
+                        <iframe id="videoPreview" width="400" height="270" src="@Model.WebVideoLink" frameborder="0" allowfullscreen></iframe>
+                    }
+                </div>
+
+                <!-- Pulsanti di Azione -->
+                <div class="form-group">
+                    <br />
+                    <button type="submit" class="btn btn-warning btn-sm" onclick="convertVideoLink()">Edit</button>
+                    &nbsp; &nbsp;
+                    <button class="btn btn-secondary" asp-controller="VideoKnowledgesContents" asp-action="Index">Back to Video Knowledge</button>
+                </div>
+            </form>
+        </div>
+        
+        <!-- Colonna Destra: Gestione degli eventi -->
+        <div class="column right">
+            <h2>Events</h2>
+            <a class="btn btn-success" asp-controller="VideoKnowledgesEvents" asp-action="Create" asp-route-id="@this.Model.Id">Create New Event</a>
+            <div class="form-group">
+                <br />
+                <label asp-for="VideoDuration" class="control-label">Video length in seconds:</label> @Model.VideoDuration
+            </div>
+
+            <!-- Tabella Eventi -->
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Stop at second</th>
+                        <th>Event Type</th>
+                        <th>Description</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model.EvntList != null)
+                    {
+                        var OrdEList = Model.EvntList.OrderBy(c => c.EvntTimeStopinSec);
+                        foreach (var item in OrdEList)
+                        {
+                            <tr>
+                                <td>@item.EventTimeStopDescription</td>
+                                <td>@item.EventTypeDescription</td>
+                                <td>
+                                    @if (item.EvntWebLink != null) {
+                                        @item.EvntWebLink
+                                        <br />
+                                        <iframe id="MyLinkPrev" width="150" height="150" src="@item.EvntWebLink" allowfullscreen></iframe>
+                                    } else if (item.EvntVideo != null) {
+                                        <video id="myvid" controls width="150" height="150">
+                                            <source src="~/media/videosOfKnowledges/@item.EvntVideo" type="video/mp4" alt="" />
+                                        </video>
+                                    } else if (item.EvntImage != null) {
+                                        <img src="/media/imagesOfKnowledges/@item.EvntImage" width="150" height="150" alt="" />
+                                    } else if (item.EvntWebVideoLink != null) {
+                                        <iframe width="150" height="150" src="@item.EvntWebVideoLink" frameborder="0"></iframe>
+                                    } else if (item.EvntQuizName != null) {     
+                                        <div style="vertical-align: top;">
+                                            <a class="btn btn-addList" asp-controller="VideoKnowledgesQuestions" asp-action="QuizPlayer" asp-route-id="@item.Id">@item.EvntQuizName</a>
+                                        </div>
+                                    }
+                                </td>
+                                <td> 
+                                    <a class="btn btn-warning btn-sm" asp-controller="VideoKnowledgesEvents" asp-action="Edit" asp-route-id="@item.Id">Edit</a> 
+                                    <a class="btn btn-danger btn-sm confirmDeletion" asp-controller="VideoKnowledgesEvents" asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                                </td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+
+    <script>
+        $(document).ready(function() {
+            toggleVideoSource();
+
+            // Aggiorna l'anteprima video in tempo reale
+            $('#WebVideoLink').on('input', function() {
+                var embedLink = convertToEmbedLink(this.value);
+                if (embedLink) {
+                    $('#videoPreview').attr('src', embedLink).show();
+                } else {
+                    $('#videoPreview').hide();
+                }
+            });
+
+            // Conferma eliminazione eventi
+            $('.confirmDeletion').on('click', function(e) {
+                if (!confirm('Sei sicuro di voler eliminare questo evento?')) {
+                    e.preventDefault();
+                }
+            });
+        });
+
+        function toggleVideoSource() {
+            var source = document.getElementById("VideoSource").value;
+            document.getElementById("UpldVideo").style.display = source === "2" ? 'block' : 'none';
+            document.getElementById("UrlVideo").style.display = source === "1" ? 'block' : 'none';
+        }
+
+        function convertToEmbedLink(url) {
+            if (/youtube\.com.*v=/.test(url)) {
+                return 'https://www.youtube.com/embed/' + url.split('v=')[1].split('&')[0];
+            } else if (/youtu\.be/.test(url)) {
+                return 'https://www.youtube.com/embed/' + url.split('.be/')[1];
+            } else if (/vimeo\.com/.test(url)) {
+                return 'https://player.vimeo.com/video/' + url.split('.com/')[1];
+            } else if (/dailymotion\.com/.test(url)) {
+                return 'https://www.dailymotion.com/embed/video/' + url.split('.com/video/')[1];
+            }
+            return null;
+        }
+    </script>
+}

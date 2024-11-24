@@ -1,0 +1,149 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+@model VideoKnowledge.Models.Questionary
+@{
+    ViewData["Title"] = "Create Quiz";
+}
+
+<br />
+
+<div class="text-center">
+    <h1 class="display-4">Create Your Quiz</h1>
+</div>
+
+<br />
+<br />
+
+<form asp-action="Create" enctype="multipart/form-data">
+@* <form method="post" asp-action="Create"> *@
+@*     <div id="articleDesc" class="container col-8 offset-2" style="padding:30px;"></div> *@
+    <div id="titleSection" class="container">
+        <div class="form-group">
+            <label asp-for="TestName" class="control-label"></label>
+            <textarea asp-for="TestName" class="form-control"></textarea>
+            <span asp-validation-for="TestName" class="text-danger"></span>
+    </div>
+
+
+@*     <div class="form-group" onchange="Select()">
+        <label asp-for="NumberOfQuestions" class="control-label"></label>
+        <input asp-for="NumberOfQuestions" class="form-control" />
+        <span asp-validation-for="NumberOfQuestions" class="text-danger"></span>
+    </div> *@
+    <div class="form-group">
+        <br />
+        <button class="btn btn-primary">Create</button>
+    </div>
+</form>
+   @*  <br />
+    <br />
+    <div id="questionSection" class="container">
+        <div class="text-danger" asp-validation-summary="ModelOnly"></div>
+        @if (Model !=null && Model.QuestionList != null)
+        {
+            <form asp-action="Create" enctype="multipart/form-data">
+            @for (int i = 0; i < Model.NumberOfQuestions; i++)
+            {
+                <div class="border container bg-light" style="padding:30px; border-radius:20px;">
+                    <div id="question+@i">
+                        <div class="form-group row">
+                            <div class="col-2">
+                                <label>Question @(i + 1):</label>    
+                            </div>
+                            <div class="col-10">
+                                <input class="form-control" asp-for="QuestionList[i].QuestionText" />
+                                <span asp-validation-for="QuestionList[i].QuestionText" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <br /><br />
+                        <div class="form-group row">
+                            <div class="col-1"></div>
+                            <div class="col-1" style="text-align:right">
+                                <label>A) </label>
+                            </div>
+                            <div class="col-4">
+                                <input class="form-control" asp-for="QuestionList[i].AnswerA" />
+                                <span asp-validation-for="QuestionList[i].AnswerA" class="text-danger"></span>
+                            </div>
+                            <div class="col-1"></div>
+                            <div class="col-1" style="text-align:right">
+                                <label>B) </label>
+                            </div>
+                            <div class="col-4">
+                                <input class="form-control" asp-for="QuestionList[i].AnswerB" />
+                                <span asp-validation-for="QuestionList[i].AnswerB" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <div class="col-1"></div>
+                            <div class="col-1" style="text-align:right">
+                                <label>C) </label>
+                            </div>
+                            <div class="col-4">
+                                <input class="form-control" asp-for="QuestionList[i].AnswerC" />
+                                <span asp-validation-for="QuestionList[i].AnswerC" class="text-danger"></span>
+                            </div>
+                            <div class="col-1"></div>
+                            <div class="col-1" style="text-align:right">
+                                <label>D) </label>
+                            </div>
+                            <div class="col-4">
+                                <input class="form-control" asp-for="QuestionList[i].AnswerD" />
+                                <span asp-validation-for="QuestionList[i].AnswerD" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <br /><br />
+                        <div class="form-group row">
+                            <div class="col-3 offset-5" style="text-align:right">
+                                <label>Select the correct answer: </label>
+                            </div>
+
+                            <div class="col-4">
+                                @Html.DropDownListFor(m => m.QuestionList[i].CorrectAnswer,
+                                                        new SelectList(new List<string> { "A", "B", "C", "D" }),
+                                                        "-- Correct Answer --",
+                                                        new { @class = "form-control" })
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <br /><br /><br />
+            }
+            </form>
+         }
+        <br /> *@
+        <div class="form-group row">
+            <div class="col-4 offset-4">
+                <button type="submit" class="btn btn-info form-control">Submit Quiz</button>
+            </div>
+        </div>
+    </div>
+@* </form> *@
+
+@* <div style="visibility:hidden">
+    @foreach (var a in Model.ArticleList)
+    {
+        <p id="@a.ArticleId">@a.Description</p>
+    }
+</div> *@
+
+    <script>
+
+        function Select () {
+             document.getElementById("NumberOfQuestions").setAttribute("NumberOfQuestions", ('#NumberOfQuestions').val());
+        }
+
+         
+    </script>
+
+
+
+@section Scripts{
+    <partial name="_ValidationScriptsPartial" />
+    <script src="~/js/Quiz.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+}

@@ -1,0 +1,159 @@
+﻿@model VideoKnowledge.Models.VideoKnowledgeContent
+
+@{
+    // Imposta il titolo della pagina e specifica il layout utilizzato
+    ViewData["Title"] = "Create";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>Create VideoKnowledge</h1>
+
+<div class="row">
+    <div class="col-md-4">
+        <!-- Form per creare un nuovo contenuto VideoKnowledge -->
+        <form asp-action="Create" enctype="multipart/form-data">
+            <!-- Riepilogo errori di validazione del modello -->
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+            <!-- Campo per il nome -->
+            <div class="form-group">
+                <label asp-for="Name" class="control-label"></label>
+                <input asp-for="Name" class="form-control" />
+                <span asp-validation-for="Name" class="text-danger"></span>
+            </div>
+
+            <!-- Campo per la descrizione -->
+            <div class="form-group">
+                <label asp-for="Description" class="control-label"></label>
+                <textarea asp-for="Description" class="form-control"></textarea>
+                <span asp-validation-for="Description" class="text-danger"></span>
+            </div>
+
+            <!-- Dropdown per selezionare la categoria -->
+            <div class="form-group">
+                <label>Categories</label>
+                <select asp-for="CategoryId" class="form-control" asp-items="ViewBag.Categories">
+                    <option value="0">Choose a category</option>
+                </select>
+                <span asp-validation-for="CategoryId" class="text-danger"></span>
+            </div>
+
+            <!-- Upload immagine di copertina -->
+            <div class="form-group">
+                <label asp-for="Image" class="control-label">Cover</label>
+                <input asp-for="ImageUpload" class="form-control" />
+                <img id="imgpreview" class="pt-2" />
+                <span asp-validation-for="ImageUpload" class="text-danger"></span>
+            </div>
+
+            <!-- Selettore per la sorgente del video -->
+            <div class="form-group">
+                <label>VideoSource</label>
+                <select asp-for="VideoSource" class="form-control" asp-items="ViewBag.VideoSource" onchange="Select()">
+                    <option value="0">Select Video Source</option>
+                    <option value="1">Web</option>
+                    <option value="2">File Upload</option>
+                </select>
+                <span asp-validation-for="VideoSource" class="text-danger"></span>
+            </div>
+
+            <!-- Campo per il link del video web -->
+            <div id="UrlVideo" class="form-group">
+                <label asp-for="WebVideoLink" class="control-label"></label>
+                <input asp-for="WebVideoLink" class="form-control" />
+                <span asp-validation-for="WebVideoLink" class="text-danger"></span>
+            </div>
+
+            <!-- Campo per il caricamento del video -->
+            <div id="UpldVideo" class="form-group">
+                <label asp-for="VideoLink" class="control-label"></label>
+                <input asp-for="VideoUpload" class="form-control" />
+            </div>
+
+            <br />
+            <!-- Pulsanti per creare e tornare indietro -->
+            <div class="form-group d-flex justify-content-between">
+                <button type="submit" class="btn btn-success" onclick="convertVideoLink()">Create</button>
+                <a href="javascript:history.go(-1)" class="btn btn-secondary">Back to My List</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @* Inclusione degli script per la validazione e altre funzionalità *@
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+
+    <script src="https://cdn.ckeditor.com/4.19.0/standard/ckeditor.js"></script>
+    <script>
+        // Anteprima immagine al caricamento
+        $("#ImageUpload").change(function() {
+            readURL(this);
+        });
+
+        // Anteprima video al caricamento
+        $("#VideoUpload").change(function() {
+            $("#VideoDuration") = $("#VideoUpload").duration;
+            readURL(this);
+        });
+
+        // Gestione del selettore per la sorgente video
+        function Select() {
+            var select = document.getElementById("VideoSource");
+            var index = select.selectedIndex;
+            var text = select.options[index].text;
+            if (text == "Web") {
+                document.getElementById("UpldVideo").style.display = 'none';
+                document.getElementById("UrlVideo").style.display = 'block';
+            } else if (text == "File Upload") {
+                document.getElementById("UpldVideo").style.display = 'block';
+                document.getElementById("UrlVideo").style.display = 'none';
+            } else {
+                document.getElementById("UpldVideo").style.display = 'none';
+                document.getElementById("UrlVideo").style.display = 'none';
+            }
+        }
+
+        // Conversione del link video in formato incorporabile
+        function convertVideoLink() {
+            var webVideoLink = document.getElementById("WebVideoLink").value;
+            var embedLink;
+
+            if (webVideoLink.includes('youtube.com/embed')) {
+                embedLink = webVideoLink;
+            } else if (webVideoLink.includes('youtube.com/shorts')) {
+                var videoId = webVideoLink.split('shorts/')[1];
+                embedLink = 'https://www.youtube.com/embed/' + videoId;
+            } else if (webVideoLink.includes('youtube.com')) {
+                var videoId = webVideoLink.split('v=')[1].split('&')[0];
+                embedLink = 'https://www.youtube.com/embed/' + videoId;
+            } else if (webVideoLink.includes('youtu.be')) {
+                var videoId = webVideoLink.split('youtu.be/')[1].split('?')[0];
+                embedLink = 'https://www.youtube.com/embed/' + videoId;
+            } else if (webVideoLink.includes('player.vimeo.com/video')) {
+                embedLink = webVideoLink;
+            } else if (webVideoLink.includes('vimeo.com')) {
+                var videoId = webVideoLink.split('.com/')[1];
+                embedLink = 'https://player.vimeo.com/video/' + videoId;
+            } else if (webVideoLink.includes('www.dailymotion.com/embed/video')) {
+                embedLink = webVideoLink;
+            } else if (webVideoLink.includes('dailymotion.com')) {
+                var videoId = webVideoLink.split('.com/video/')[1].split('?')[0];
+                embedLink = 'https://www.dailymotion.com/embed/video/' + videoId;
+            } else {
+                console.log('Link non riconosciuto');
+                return;
+            }
+
+            console.log('Link per l\'incorporamento: ' + embedLink);
+            document.getElementById('WebVideoLink').value = embedLink;
+        }
+
+        // Inizializza il selettore quando la pagina è pronta
+        $(document).ready(function() {
+            Select();
+        });
+    </script>
+}

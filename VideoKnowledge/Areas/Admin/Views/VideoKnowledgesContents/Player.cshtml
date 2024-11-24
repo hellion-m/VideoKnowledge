@@ -1,0 +1,909 @@
+﻿@using System.Text.Json
+@using System.Text.Json.Serialization
+@model VideoKnowledge.Models.VideoKnowledgeContent
+
+@{
+    var options = new JsonSerializerOptions
+    {
+        ReferenceHandler = ReferenceHandler.Preserve,
+        WriteIndented = true
+    };
+
+    string events;
+    string evntOnPauseJson;
+    evntOnPauseJson = Model.EvntOnPause != null ? JsonSerializer.Serialize(Model.EvntOnPause, options) : "null";
+    var eVideoPath = Model.EvntList.FirstOrDefault()?.EvntVideo ?? string.Empty;
+
+    try
+    {
+        events = Model.EvntList != null ? JsonSerializer.Serialize(Model.EvntList, options) : "[]";
+        
+    }
+    catch (Exception ex)
+    {
+        events = "[]"; // Fallback in caso di errore
+        Console.WriteLine(ex.Message); // Log dell'errore
+    }
+}
+
+@{
+    ViewData["Title"] = "Player";
+    Layout = "~/Views/Shared/_PlayerLayout.cshtml";
+}
+<style>
+    .cover {
+        font-family: Verdana, sans-serif;
+        font-size: 10px;
+        float: left;
+        margin: 0;
+        padding: 0;
+        position: relative;
+        overflow: hidden;
+    }
+    .cover img {
+        float: left;
+        margin: 0;
+        padding: 0;
+        background: #fff;
+        border: none;
+    }
+    .cover span {
+        float: left;
+        margin: 0;
+        padding: 10px;
+        width: 100%;
+        color: #dedede;
+        background: #222;
+        background: rgba(0,0,0,0.7);
+        position: absolute;
+        left: 0;
+        bottom: 0;
+    }
+    .cover span strong {
+        font-weight: bold;
+        font-size: 11px;
+        text-transform: uppercase;
+        display: block;
+        padding-bottom: 5px;
+    }
+    .cover span {
+        display: none;
+    }
+    .cover:hover span { display: block; }
+
+    #link-message {
+        display: none;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background-color: #fff;
+        padding: 20px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        text-align: center;
+    }
+
+    #event-image-container {
+        position: relative;
+        text-align: center;
+        margin: 20px 0;
+    }
+
+    #event-image {
+        max-width: 100%;
+        height: auto;
+        display: block;
+        margin: 0 auto;
+    }
+
+    #quiz-results-container {
+        position: relative;
+        margin: 20px auto;
+        max-width: 600px;
+        text-align: center;
+        font-size: 1.2em;
+        border-radius: 8px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    }
+
+</style>
+
+<head>
+    <title>Player</title>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <!-- Includi l'API di YouTube per iFrame -->
+    <script src="https://www.youtube.com/iframe_api"></script>
+    <!-- Includi l'API di Vimeo -->
+    <script src="https://player.vimeo.com/api/player.js"></script>
+
+    <link href="https://vjs.zencdn.net/7.18.1/video-js.css" rel="stylesheet">
+    <script src="https://vjs.zencdn.net/7.18.1/video.min.js"></script>
+</head>
+
+<body>
+    <div class="cover" onclick="playVideo()">
+        @if (Model.Image!=null){
+            <img src="~/media/imagesOfKnowledges/@Model.Image" alt="" />
+        }
+        else
+        {
+             <img src="~/media/imagesOfKnowledges/VdkPlayer.png" alt="" />
+        }
+        <span>
+            <strong>Clicca per proseguire</strong>
+            Clicca sulla cover del Video Contenuto per proseguire con la riproduzione
+            <a href="javascript:history.go(-1)" class="btn btn-secondary">Back</a>
+        </span>
+        
+    </div>
+    <div class="container" style="display: none;">
+        <!-- Container per il video di Vimeo -->
+        <div id="vimeo-video-container" style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; max-width: 100%; display: none;">
+            <iframe id="vimeo-video" src="@(Model.WebVideoLink)" frameborder="0" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;" allowfullscreen allow='autoplay'></iframe>
+            <!-- Il player Vimeo verrà caricato qui tramite API Vimeo -->
+        </div>
+        <div id="youtube-container" style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; max-width: 100%;">
+            <iframe id="youtube-video" src="@(Model.WebVideoLink)?enablejsapi=1" frameborder="0" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;" allowfullscreen allow='autoplay'></iframe>
+            
+        </div>
+        <div id="youtubeEvent-container" style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; max-width: 100%; display: none;">
+            <iframe id="youtube-event-video" src="@(string.IsNullOrEmpty(eVideoPath) ? "" : "/media/videosOfKnowledges/" + eVideoPath)" frameborder="0" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;" allowfullscreen allow='autoplay'></iframe>
+            <button id="got-it-button" onclick="resumeVideo()" style="margin-top: 10px; background-color: white; color: black; border: 1px solid #999; padding: 5px 10px; border-radius: 5px; box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3); position: absolute; top: 10px; right: 10px;">Got It</button>
+        </div>
+
+        <div id="local-video-container" style="display: none; position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; max-width: 100%;">
+            <video id="local-video" class="video-js vjs-default-skin" controls preload="auto" width="640" height="264"
+                   data-setup='{"fluid": true}'>
+                <source src="@(!string.IsNullOrEmpty(Model.VideoLink) ? "/media/videosOfKnowledges/" + Model.VideoLink : "")" type="video/mp4">
+                Your browser does not support the video tag.
+            </video>
+        </div>
+    </div>
+    <!-- Container per il messaggio di video non supportato -->
+    <div id="video-not-supported-container" style="display: none;">
+        <p>Video not supported</p>
+    </div>
+
+    <div id="link-message" style="display: none; text-align: center; padding-top: 20px;">
+        <p id="event-description"></p>
+        <p>Please visit the website:</p>
+        <a id="website-link" href="#" style="color: blue; text-decoration: underline;" target="_blank">Here</a>
+        <br />
+        <button id="got-it-button" onclick="resumeVideo()" style="margin-top: 10px; background-color: white; color: black; border: 1px solid #999; padding: 5px 10px; border-radius: 5px; box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);">Got It</button>
+    </div>
+    <div id="event-image-container" onclick="resumeVideo()" style="display: none; position: absolute; top: 0; left: 50%; transform: translateX(-50%);">
+        <img id="event-image" src="" alt="Event Image" style="max-width: 100%; height: auto;" />
+    </div>
+    <div id="quiz-container" style="display: none; text-align: center; padding-top: 20px;">
+        <div id="timer" class="timer"></div>
+        <form id="quiz-form">
+            <div class="text-center">
+                <h1 class="display-4">Play Quiz</h1>
+            </div>
+            </br>
+            <div id="quiz-questions"></div>
+            <div class="form-group">
+                <button type="button" onclick="submitQuiz()" class="btn btn-primary">Submit Quiz</button>
+            </div>
+        </form>
+    </div>
+    <div id="event-image-container" onclick="resumeVideo()" style="display: none; position: absolute; top: 0; left: 50%; transform: translateX(-50%);">
+        <img id="event-image" src="" alt="Event Image" style="max-width: 100%; height: auto;" />
+    </div>
+    <div id="quiz-results-container" style="display: none; padding: 20px; background-color: #f9f9f9; border: 1px solid #ddd;">
+        <h2>Risultati del quiz</h2>
+        <p>Domande totali: <span id="total-questions">0</span></p>
+        <p>Risposte corrette: <span id="correct-answers">0</span></p>
+        <div class="form-group">
+            <button type="button" onclick="returnToVdk()" class="btn btn-primary">Back to video</button>
+        </div>
+    </div>
+    
+</div>
+
+@* </div> *@
+
+    <div width: 200px; height: 200px;>
+        <br/><br/>
+        <a href="javascript:history.go(-1)" class="btn btn-secondary">Back</a>
+    </div>
+</body>
+
+<script>
+ var events = @Html.Raw(events);
+ var evntOnPause = @Html.Raw(evntOnPauseJson);
+ var quizPlayerUrl = '@Url.Action("QuizPlayer", "VideoKnowledgesQuestions", new { id = "PLACEHOLDER" })';
+       
+let linkClosed = false;
+let handledEvents = new Set();
+let currentEventIndex = 0;
+let eventVideoPlaying = false;
+let stoppedTime = 0;
+let timerInterval; // Variabile globale per l'intervallo del timer
+let videoOnpauseRunning=0;
+let videEventRunning=0;
+//let manualPause = false;
+let scriptPause = false;
+        
+if (events && events.$values) {
+    events.$values.sort((a, b) => a.EvntTimeStopinSec - b.EvntTimeStopinSec);
+}
+
+    const Videoplayer = (function makeVideoPlayer() {
+    let player = null;      // Player YouTube
+    let eventPlayer = null; // Player evento YouTube
+    let vimeoPlayer = null; // Player Vimeo
+
+    function onYouTubeIframeAPIReady() {
+        player = new YT.Player('youtube-video', {
+            events: {
+                'onReady': onPlayerReady,
+                'onStateChange': onPlayerStateChange
+            }
+        });
+        eventPlayer = new YT.Player('youtube-event-video', {
+            events: {
+                'onReady': function(event) {
+                    eventPlayer = event.target;
+                }
+            }
+        });
+    }
+
+    window.onYouTubeIframeAPIReady = onYouTubeIframeAPIReady;
+
+    function onPlayerReady(event) {
+        player = event.target;
+        checkTimeUpdate();
+        addStopEventListener();
+    }
+
+    function onPlayerStateChange(event) {
+        if (event.data == YT.PlayerState.PLAYING) {
+            checkTimeUpdate();
+        }
+        if (event.data == YT.PlayerState.PAUSED) {
+            handleStopEvent();
+        }
+    }
+
+    function play() {
+        if (player && typeof player.playVideo === 'function') {
+            player.playVideo();
+        } else {
+            console.error("playVideo is not a function or player is not initialized");
+        }
+    }
+
+    function getPlayer() {
+        return player;
+    }
+
+    function getEventPlayer() {
+        return eventPlayer;
+    }
+
+    function init() {
+        if (typeof YT === 'undefined' || typeof YT.Player === 'undefined') {
+            const tag = document.createElement("script");
+            tag.src = "https://www.youtube.com/iframe_api";
+            const firstScriptTag = document.getElementsByTagName("script")[0];
+            firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+        } else {
+            onYouTubeIframeAPIReady();
+        }
+    }
+
+    function addStopEventListener() {
+        var webVideoLink = '@Model.WebVideoLink';
+        var vimeoPlayer = getVimeoPlayer();
+        if (webVideoLink.includes("vimeo.com") && vimeoPlayer) {
+            vimeoPlayer.addEventListener('onStateChange', function(event) {
+                if (event.data == YT.PlayerState.PAUSED) {
+                    handleStopEvent();
+                }
+            });
+        }else{
+            player.addEventListener('onStateChange', onPlayerStateChange);
+        }
+    }
+
+    // Funzione per inizializzare il player Vimeo
+    function initVimeoPlayer(vimeoContainerId, vimeoVideoLink) {
+        vimeoPlayer = new Vimeo.Player(vimeoContainerId, {
+            url: vimeoVideoLink,
+            autoplay: true,
+            muted: true // Imposta su true se vuoi silenziare il video all'avvio
+        });
+
+        // Usa la promise 'ready' per verificare che il player Vimeo sia pronto
+        vimeoPlayer.ready().then(function() {
+            // Player Vimeo è pronto
+            console.log('Player Vimeo inizializzato correttamente.');
+
+            vimeoPlayer.on('play', function() {
+                console.log('Il video Vimeo è stato riprodotto.');
+                checkVimeoTimeUpdate(); // Inizializza il controllo del tempo per Vimeo
+            });
+
+            vimeoPlayer.on('timeupdate', function(data) {
+                // Gestisci aggiornamenti di tempo per Vimeo
+                checkVimeoTimeDataUpdate(data);
+                console.log(`Tempo attuale video Vimeo: ${data.seconds}`);
+            });
+
+            vimeoPlayer.on('pause', function() {
+                if (!scriptPause) {
+                    console.log('Il video Vimeo è stato messo in pausa manualmente.');
+                    handleStopEvent(); // Chiama solo se la pausa è manuale
+                 }
+                console.log('Vimeo video is paused');
+                //handleStopEvent();
+            });
+
+            vimeoPlayer.on('ended', function() {
+                console.log('Il video Vimeo è terminato.');
+            });
+
+            // Avvia la riproduzione
+            vimeoPlayer.play().catch(function(error) {
+                console.error('Errore durante la riproduzione del video Vimeo:', error);
+            });
+        }).catch(function(error) {
+            console.error('Errore durante l\'inizializzazione del player Vimeo:', error);
+        });
+    }
+
+    function getVimeoPlayer() {
+        return vimeoPlayer;
+    }
+
+    return {
+        getPlayer,
+        getEventPlayer,
+        init,
+        play,
+        initVimeoPlayer,
+        getVimeoPlayer
+    };
+}());
+
+Videoplayer.init();
+
+
+function playVideo() {
+    $('.cover').hide();
+    $('.container').show();
+    $('#youtube-container').show();
+    $('#youtubeEvent-container').hide();
+
+    var videoSource = @Model.VideoSource;
+    var webVideoLink = '@Model.WebVideoLink';
+
+    if (videoSource == "1") {
+            // Video Vimeo
+        if (webVideoLink.includes("vimeo.com")) {
+                    
+            Videoplayer.initVimeoPlayer('vimeo-video-container', webVideoLink); // Aggiungi l'inizializzazione Vimeo qui
+            $('#youtube-container').hide();
+            $('#local-video-container').hide();
+            $('#video-not-supported-container').hide();
+            $('#vimeo-video-container').show();
+        } 
+        // Video YouTube
+        else if (webVideoLink.includes("youtube.com") || webVideoLink.includes("youtu.be")) {
+            attemptPlayVideo();
+        } else {
+            // Caso fallback per video locali
+            // attemptPlayLocalVideo();
+            showVideoNotSupportedMessage();
+        }
+    } else if (videoSource == "2") {
+        var player = videojs('local-video'); // Inizializza il player Video.js
+        var videoLink = "/media/videosOfKnowledges/@Model.VideoLink"; // Percorso del video locale
+
+        // Imposta la sorgente del video e mostra il player
+        player.src({ type: 'video/mp4', src: videoLink });
+        $('#youtube-container').hide(); // Nascondi il container di YouTube
+        $('#local-video-container').show(); // Mostra il container del video locale
+
+        player.play(); // Avvia la riproduzione del video con Video.js
+        checkLocalVideoTimeUpdate(player); // Gestisce gli eventi di tempo con Video.js
+    }
+}
+
+function playEventVideo(eventVideoUrl) {
+    var videoSource = @Model.VideoSource;
+    if (videoSource == "1") {
+        $('#youtube-container').hide();
+        $('#vimeo-video-container').hide();
+    }else{
+        $('#local-video-container').hide();
+    }
+    $('#youtubeEvent-container').show();
+
+    $('#youtube-event-video').attr('src', eventVideoUrl + "?enablejsapi=1&autoplay=1");
+    eventVideoPlaying = true;
+}
+
+
+document.addEventListener('DOMContentLoaded', function() {
+    // Inizializza il player Video.js
+    var player = videojs('local-video');
+
+    // Rileva quando il video è messo in pausa
+    player.on('pause', function() {
+        if (!scriptPause) {
+            console.log('Il video Vimeo è stato messo in pausa manualmente.');
+            handleStopEvent(); // Chiama solo se la pausa è manuale
+        }
+    });
+});
+function attemptPlayVideo() {
+        $('#vimeo-video-container').hide();
+        // $('#local-video-container').hide();
+        $('#video-not-supported-container').hide();
+    const player = Videoplayer.getPlayer();
+    if (player) {
+        player.playVideo();
+        var playCheckInterval = setInterval(function() {
+            if (player.getPlayerState() === YT.PlayerState.PLAYING) {
+                clearInterval(playCheckInterval);
+                checkTimeUpdate();
+            } else {
+                player.playVideo();
+            }
+        }, 1000);
+    } else {
+        console.error("Player is not initialized.");
+    }
+}
+
+function showVideoNotSupportedMessage() {
+    // Nascondi tutti i player
+    $('#youtube-container').hide();
+    $('#youtube-video-container').hide();
+    $('#vimeo-video-container').hide();
+    $('#local-video-container').hide();
+    
+    // Mostra il messaggio di video non supportato
+    $('#video-not-supported-container').show();
+}
+
+
+function checkVimeoTimeDataUpdate(data) {
+    if (!Array.isArray(events)) {
+        events = [events];
+    }
+
+    events.sort(function(a, b) {
+        return a.$values[0].EvntTimeStopinSec - b.$values[0].EvntTimeStopinSec;
+    });
+
+    var checkInterval = setInterval(function() {
+        const player = Videoplayer.getPlayer();
+        const vimeoPlayer = Videoplayer.getVimeoPlayer();
+        var webVideoLink = '@Model.WebVideoLink';
+        var currentTime = 0;
+                
+        if (vimeoPlayer && webVideoLink.includes("vimeo.com")) {
+            checkEvent(data.seconds);
+            } else {
+                console.error("Vimeo player non è pronto o non è stato inizializzato correttamente.");
+            }
+
+    }, 500);
+}
+function checkVimeoTimeUpdate() {
+    if (!Array.isArray(events)) {
+        events = [events];
+    }
+
+    events.sort(function(a, b) {
+        return a.$values[0].EvntTimeStopinSec - b.$values[0].EvntTimeStopinSec;
+    });
+
+    var checkInterval = setInterval(function() {
+        const player = Videoplayer.getPlayer();
+        const vimeoPlayer = Videoplayer.getVimeoPlayer();
+        var webVideoLink = '@Model.WebVideoLink';
+        var currentTime = 0;
+                
+        if (vimeoPlayer && webVideoLink.includes("vimeo.com")) {
+            //if (videoOnpauseRunning==0){
+                checkEvent(vimeoPlayer.getCurrentTime());
+            //}
+            // videoOnpauseRunning=false;
+            } else {
+                console.error("Vimeo player non è pronto o non è stato inizializzato correttamente.");
+            }
+
+    }, 500);
+}
+
+function checkTimeUpdate() {
+    if (!Array.isArray(events)) {
+        events = [events];
+    }
+
+    events.sort(function(a, b) {
+        return a.$values[0].EvntTimeStopinSec - b.$values[0].EvntTimeStopinSec;
+    });
+
+    var checkInterval = setInterval(function() {
+        const player = Videoplayer.getPlayer();
+        const vimeoPlayer = Videoplayer.getVimeoPlayer();
+        var webVideoLink = '@Model.WebVideoLink';
+        var currentTime = 0;
+
+        if (player && (webVideoLink.includes("youtube.com") || webVideoLink.includes("youtu.be"))) {
+            // Se è un video YouTube
+            currentTime = Math.floor(player.getCurrentTime());
+            checkEvent(currentTime);
+        } else {
+            console.error("Nessun player trovato (YouTube o Vimeo).");
+        }
+
+    }, 500);
+}
+
+
+function checkEvent(currentTime) {
+    if (currentEventIndex < events[0].$values.length) {
+        var currentEvent = events[0].$values[currentEventIndex];
+        if (currentTime >= Math.floor(currentEvent.EvntTimeStopinSec) && !handledEvents.has(currentEvent.Id)) {
+            videoEventRunning=1;
+            pauseVideo();
+            handleEvent(currentEvent);
+            handledEvents.add(currentEvent.Id);
+            currentEventIndex++;
+            videoEventRunning=0;
+        }
+    }
+}
+
+
+function checkLocalVideoTimeUpdate(videoElement) {
+            
+    if (!Array.isArray(events)) {
+        events = [events];
+    }
+
+    events.sort(function(a, b) {
+        return a.$values[0].EvntTimeStopinSec - b.$values[0].EvntTimeStopinSec;
+    });
+
+    var checkInterval = setInterval(function() {
+        // Utilizza videoElement.currentTime() se videoElement è un oggetto Video.js
+        var currentTime = Math.floor(videoElement.currentTime());
+                
+        // Verifica che gli eventi siano definiti e che non siano terminati
+        if (events && events.length > 0 && currentEventIndex < events[0].$values.length) {
+            var currentEvent = events[0].$values[currentEventIndex];
+            if (currentTime >= Math.floor(currentEvent.EvntTimeStopinSec) && !handledEvents.has(currentEvent.Id)) {
+                videoElement.pause(); // Pausa il video con Video.js
+                handleEvent(currentEvent); // Gestisce l'evento
+                handledEvents.add(currentEvent.Id);
+                currentEventIndex++;
+                clearInterval(checkInterval);
+            }
+                    
+        } else {
+            clearInterval(checkInterval);
+        }
+    }, 500);
+}
+
+function handleEvent(event) {
+    switch (event.EventType) {
+        case "1":
+            pauseVideo();
+            showImage("/media/imagesOfKnowledges/" + event.EvntImage);
+            break;
+        case "4":
+            playEventVideo("/media/videosOfKnowledges/" + event.EvntVideo);
+            break;
+        case "5":
+            pauseVideo();
+            playEventVideo(event.EvntWebVideoLink);
+            break;
+        case "3":
+            pauseVideo();
+            showLinkMessage(event.EvntWebLink, event.Description);
+            openLinkInNewWindow(event.EvntWebLink);
+            break;
+        case "2":
+            pauseVideo();
+            showQuiz(event.Id, event.QuestionList, event.EvntTimerDuration);
+            break;
+        default:
+            pauseVideo();
+            console.log('Tipo di evento sconosciuto: ' + event.EventType);
+            break;
+    }
+}
+
+function showImage(imageSrc) {
+    $('#youtube-container').hide();
+    $('#vimeo-video-container').hide();
+    const imageElement = document.getElementById('event-image');
+    const imageContainer = document.getElementById('event-image-container');
+    // var imagePath="/media/imagesOfKnowledges/" + imageSrc
+    // imageElement.src = imagePath;
+    imageElement.src = imageSrc;
+    imageElement.style.display = 'block';
+    imageContainer.style.display = 'block';
+}
+
+
+function pauseVideo() {
+    //manualPause = false; // Non è una pausa manuale
+    scriptPause=true;
+    const player = Videoplayer.getPlayer();
+    const vimeoPlayer = Videoplayer.getVimeoPlayer();
+    if (vimeoPlayer && typeof vimeoPlayer.pause === 'function') {
+        vimeoPlayer.pause().then(function() {
+            console.log('Il video Vimeo è stato messo in pausa automaticamente.');
+        }).catch(function(error) {
+            console.error('Errore durante la pausa del video Vimeo:', error);
+        });
+    } else if (player && typeof player.pauseVideo === 'function') {
+        player.pauseVideo();
+    } else {
+        console.error('Nessun player disponibile per mettere in pausa il video.');
+    }
+}
+
+function showLinkMessage(link, description) {
+    $('#event-description').text(description);
+    $('#link-message').show();
+    $('#website-link').attr('href', link);
+}
+
+function resumeVideo() {
+    scriptPause=false;
+    // Nascondi l'eventuale video dell'evento
+    const evntplayer = Videoplayer.getEventPlayer();
+    if (eventVideoPlaying) {
+        $('#youtube-event-video').attr('src', ""); // Svuota la sorgente del video dell'evento
+        $('#youtubeEvent-container').hide();
+        eventVideoPlaying = false;
+    }
+
+    // Nascondi messaggi e altre componenti non pertinenti
+    $('#link-message').hide();
+    $('#event-image-container').hide();
+    $('#event-image').hide();
+
+    // Ottieni il tipo di video corrente dal Model (per distinguere locale o YouTube)
+    var videoSource = @Model.VideoSource;
+
+    if (videoSource == "1") {
+        var webVideoLink = '@Model.WebVideoLink';
+
+        if (webVideoLink.includes("vimeo.com")) {
+            $('#vimeo-video-container').show();
+            //Gestione Resume Video Vimero
+            const vimeoPlayer = Videoplayer.getVimeoPlayer();
+            if (vimeoPlayer && typeof vimeoPlayer.play === 'function') {
+                vimeoPlayer.play().then(function() {
+                    console.log('Il video Vimeo è stato ripreso.');
+                    if(videoOnpauseRunning>0){
+                    videoOnpauseRunning=0;
+                    }else{
+                    checkVimeoTimeUpdate();
+                    }
+                    // checkTimeUpdateVimeo(); // Gestisci il controllo degli eventi per Vimeo
+                }).catch(function(error) {
+                    console.error('Errore durante la ripresa del video Vimeo:', error);
+                });
+            } else {
+                console.error('Il player Vimeo non è stato correttamente inizializzato.');
+            }
+        }
+        else {
+            // Video YouTube
+            $('#youtube-container').show();
+            const player = Videoplayer.getPlayer();
+            if (player && typeof player.playVideo === 'function') {
+                player.playVideo(); // Riprendi la riproduzione del video YouTube
+                checkTimeUpdate();  // Gestisci il controllo degli eventi
+            }
+        }
+    }else if (videoSource == "2") {
+        // Video locale
+        $('#youtube-container').hide(); // Nascondi il container di YouTube
+        $('#local-video-container').show(); // Mostra il container del video locale
+
+        var localPlayer = videojs('local-video'); // Ottieni il player Video.js
+
+        // Verifica che il player locale sia stato inizializzato correttamente
+        if (localPlayer && typeof localPlayer.play === 'function') {
+            localPlayer.play(); // Riprendi la riproduzione del video locale
+            checkLocalVideoTimeUpdate(localPlayer); // Gestisci il controllo degli eventi per il video locale
+        }
+    }
+}
+
+function openLinkInNewWindow(link) {
+    const newWindow = window.open(link, '_blank');
+    if (newWindow) {
+        const checkWindowClosed = setInterval(function() {
+            if (newWindow.closed) {
+                clearInterval(checkWindowClosed);
+                linkClosed = true;
+                resumeVideo();
+            }
+        }, 1000);
+    } else {
+        alert('Consenti i popup per vedere il link.');
+        linkClosed = true;
+    }
+    pauseVideo();
+}
+
+function handleStopEvent() {
+    if (evntOnPause) {
+        handleEvent(evntOnPause);  // Mostra immagine, video, o link
+    }
+}
+
+function showQuiz(eventId, questions, timerDuration) {
+    $('#youtube-container').hide();
+    $('#quiz-container').show();
+
+    const quizContainer = $('#quiz-questions');
+    quizContainer.empty();
+
+    if (questions) {
+        questions.$values.forEach((question, index) => {
+            const questionHtml = `
+                <div class="border bg-light p-4 mb-4">
+                    <div class="form-group row">
+                        <div class="col-12">
+                            <label>${question.QuestionText}</label>
+                        </div>
+                    </div>
+                    <br />
+                    <div class="form-group row">
+                        <div class="col-6">
+                            <input type="radio" name="QuestionList[${index}].SelectedAnswer" value="A" />
+                            <label>${question.AnswerA}</label>
+                        </div>
+                        <div class="col-6">
+                            <input type="radio" name="QuestionList[${index}].SelectedAnswer" value="B" />
+                            <label>${question.AnswerB}</label>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <div class="col-6">
+                            <input type="radio" name="QuestionList[${index}].SelectedAnswer" value="C" />
+                            <label>${question.AnswerC}</label>
+                        </div>
+                        <div class="col-6">
+                            <input type="radio" name="QuestionList[${index}].SelectedAnswer" value="D" />
+                            <label>${question.AnswerD}</label>
+                        </div>
+                    </div>
+                    <input type="hidden" name="QuestionList[${index}].Id" value="${question.Id}" />
+                    <hr />
+                </div>
+            `;
+            quizContainer.append(questionHtml);
+        });
+    } else {
+        quizContainer.append('<p>No questions available for this quiz.</p>');
+    }
+    if (timerDuration!=0) {
+        // Timer duration in seconds
+        var display = document.querySelector('#timer');
+        startTimer(timerDuration, display);
+    }
+}
+//  function submitQuiz() {
+
+//     stopTimer();
+
+//     const evntId=events[0].$values[currentEventIndex-1].Id
+//     const formData = $('#quiz-form').serialize();
+//     const dataToSend = formData + "&evntId=" + evntId;
+
+//     $.ajax({
+//         type: "POST",
+//         url: '@Url.Action("SubmitQuiz", "VideoKnowledgesQuestions")',
+//         data: dataToSend,
+//         success: function(response) {
+//             // Aggiorna i valori di TotalQuestions e CorrectAnswers con quelli restituiti dal server
+//             $('#total-questions').text(response.totalQuestions);
+//             $('#correct-answers').text(response.correctAnswers);
+
+//             // Nasconde il container del quiz e mostra i risultati
+//             $('#quiz-container').hide();
+//             $('#youtube-container').hide();
+//             $('#vimeo-video-container').hide();
+//             $('#quiz-results-container').show();
+
+//             // Continua la riproduzione del video
+//             // resumeVideo();
+//         },
+//         error: function() {
+//             alert('Si è verificato un errore durante l\'invio del quiz.');
+//         }
+//     });
+// }
+
+function submitQuiz() {
+    stopTimer();
+
+    const evntId = events[0].$values[currentEventIndex - 1].Id;
+    const formData = $('#quiz-form').serialize();
+    const dataToSend = formData + "&evntId=" + evntId;
+
+    $.ajax({
+        type: "POST",
+        url: '@Url.Action("SubmitQuiz", "VideoKnowledgesQuestions")',
+        data: dataToSend,
+        success: function(response) {
+            // Aggiorna i risultati
+            $('#total-questions').text(response.totalQuestions);
+            $('#correct-answers').text(response.correctAnswers);
+
+            // Mostra il contenitore dei risultati
+            $('#quiz-container').hide();
+            $('#youtube-container').hide();
+            $('#vimeo-video-container').hide();
+            $('#quiz-results-container').show();
+
+            // Scroll verso i risultati
+            $('html, body').animate({
+                scrollTop: $("#quiz-results-container").offset().top
+            }, 500);
+        },
+        error: function() {
+            alert('Si è verificato un errore durante l\'invio del quiz.');
+        }
+    });
+}
+
+
+function returnToVdk () {
+    $('#quiz-results-container').hide();
+    var videoSource = @Model.VideoSource;
+
+    if (videoSource == "1") {
+        $('#youtube-container').show();
+    }
+    else {
+            $('#local-video-container').show();
+    }
+    resumeVideo();
+}
+
+// Function to start the countdown timer
+function startTimer(duration, display) {
+    let timer = duration, minutes, seconds;
+    timerInterval = setInterval(function () {
+        minutes = parseInt(timer / 60, 10);
+        seconds = parseInt(timer % 60, 10);
+
+        minutes = minutes < 10 ? "0" + minutes : minutes;
+        seconds = seconds < 10 ? "0" + seconds : seconds;
+
+        display.textContent = minutes + ":" + seconds;
+
+        if (--timer < 0) {
+            clearInterval(timerInterval); // Ferma il timer quando finisce il countdown
+            submitQuiz(); // Invia automaticamente il quiz
+        }
+    }, 1000);
+}
+
+// Function to stop the timer
+function stopTimer() {
+    if (timerInterval) {
+        clearInterval(timerInterval);
+        timerInterval = null;
+    }
+}
+</script>

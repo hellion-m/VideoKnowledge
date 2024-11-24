@@ -1,0 +1,90 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+@model VideoKnowledge.Models.Question
+@{
+    ViewData["Title"] = "Edit Question";
+}
+<div class="text-center">
+    <h1 class="display-4">Edit Question</h1>
+</div>
+<h1></h1>
+
+<div class="row">
+    <div class="text-danger" asp-validation-summary="ModelOnly"></div>
+    <form asp-action="Edit" enctype="multipart/form-data">
+        <div class="border container bg-light" style="padding:30px; border-radius:20px;">
+            <div id="question">
+                <div class="form-group row">
+                    <div class="col-2">
+                        <label>Question : </label>
+                    </div>
+                    <div class="col-10">
+                        <input class="form-control" asp-for="QuestionText" />
+                        <span asp-validation-for="QuestionText" class="text-danger"></span>
+                    </div>    
+                </div>
+                <br /><br />
+                <div class="form-group row">
+                    <div class="col-1"></div>
+                    <div class="col-1" style="text-align:right">
+                        <label>A) </label>    
+                    </div>
+                    <div class="col-4">
+                        <input class="form-control" asp-for="AnswerA" />
+                        <span asp-validation-for="AnswerA" class="text-danger"></span>
+                    </div>
+                    <div class="col-1"></div>
+                    <div class="col-1" style="text-align:right">
+                        <label>B) </label>
+                    </div>
+                    <div class="col-4">
+                        <input class="form-control" asp-for="AnswerB" />
+                        <span asp-validation-for="AnswerB" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <div class="col-1"></div>
+                    <div class="col-1" style="text-align:right">
+                                <label>C) </label>
+                    </div>
+                    <div class="col-4">
+                        <input class="form-control" asp-for="AnswerC" />
+                        <span asp-validation-for="AnswerC" class="text-danger"></span>
+                    </div>
+                    <div class="col-1"></div>
+                    <div class="col-1" style="text-align:right">
+                        <label>D) </label>
+                    </div>
+                    <div class="col-4">
+                        <input class="form-control" asp-for="AnswerD" />
+                        <span asp-validation-for="AnswerD" class="text-danger"></span>
+                    </div>
+                </div>
+                <br /><br />
+                <div class="form-group row">
+                    <div class="col-3 offset-5" style="text-align:right">
+                        <label>Select the correct answer: </label>
+                    </div>
+
+                    <div class="col-4">
+                        @Html.DropDownListFor(m => m.CorrectAnswer,
+                                                new SelectList(new List<string> { "A", "B", "C", "D" }),
+                                                "-- Correct Answer --",
+                                                new { @class = "form-control" })
+                    </div>
+                </div>
+                <div class="form-group">
+                    <br />
+                    <button class="btn btn-warning btn-sm">Edit</button>
+                    <a href="javascript:history.go(-1)" class="btn btn-secondary">Back to Video Knowledge</a>
+                </div>    
+            </div>    
+        </div>
+        <br /><br /><br />
+    </form>
+    
+</div>
+           

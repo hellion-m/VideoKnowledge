@@ -1,0 +1,83 @@
+﻿@model IEnumerable<VideoKnowledgeContent> // Il modello della vista è una collezione enumerabile di oggetti 'VideoKnowledgeContent'.
+
+@{
+    // Imposta il titolo della pagina e specifica il layout per questa vista.
+    ViewData["Title"] = "My Favorites Videoknowledge";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>My Favorites Videoknowledge</h1> <!-- Intestazione principale della pagina -->
+
+<!-- Inizio della tabella che elenca tutti i contenuti video preferiti -->
+<table class="table">
+    <thead>
+        <tr>
+            <!-- Intestazioni delle colonne della tabella per l'elenco dei video -->
+            <th>Name</th>
+            <th>Description</th>
+            <th>Image</th>
+            <th>Video Link</th>
+            <th></th> <!-- Intestazione vuota per i pulsanti di azione -->
+        </tr>
+    </thead>
+
+    <tbody>
+        <!-- Ciclo attraverso ogni elemento 'VideoKnowledgeContent' nel modello per visualizzarne le proprietà -->
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    <!-- Visualizza il nome del contenuto video -->
+                    @item.Name
+                </td>
+                <td>
+                    <!-- Visualizza la descrizione del contenuto video -->
+                    @item.Description
+                </td>
+                <td>
+                    <!-- Visualizza l'immagine associata al contenuto video -->
+                    <img src="/media/imagesOfKnowledges/@item.Image" width="200" height="200" alt="" />
+                </td>
+                    <!-- Rendering condizionale in base alla presenza di un file video o di un link video web.-->
+                    <!-- Se è presente un file video, mostra il player video, Se è presente un link video web, mostra l'iframe -->
+                <td>
+                    @if (item.VideoLink != null) 
+                    {
+                        <video id="myvid" controls width="360">
+                            <source src="~/media/videosOfKnowledges/@item.VideoLink" type="video/mp4" alt="" />
+                        </video>
+                    }
+                    
+                    else if (item.WebVideoLink != null) 
+                    {
+                        <iframe id="videoPreview" width="300" height="200" src="@item.WebVideoLink" frameborder="0"></iframe>
+                    }
+                </td>
+                <td>
+                    <!-- Pulsanti di azione per il contenuto video -->
+                    <!-- Pulsante per riprodurre il contenuto video -->
+                    <a class="btn btn-play" asp-action="Player" asp-route-id="@item.Id">Play</a>
+
+                    <!-- Form per rimuovere il contenuto video dai preferiti -->
+                    <form asp-action="RemoveFromFavorites" method="post" style="display:inline;">
+                        <!-- Input nascosto per passare l'ID del contenuto da rimuovere -->
+                        <input type="hidden" name="contentId" value="@item.Id" />
+                        <!-- Pulsante di invio per attivare l'azione di rimozione -->
+                        <button type="submit" class="btn btn-danger">Remove</button>
+                    </form>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<!-- Controlli di paginazione in fondo alla pagina -->
+<div class="d-flex w-100 justify-content-center">
+    <!-- Componente di paginazione personalizzata -->
+    <pagination 
+        page-count="@ViewBag.TotalPages" // Numero totale di pagine
+        page-target="/admin/VideoKnowledgesContents/@ViewBag.CategorySlug" // Modello URL di destinazione per i link di paginazione
+        page-number="@ViewBag.PageNumber" // Numero di pagina corrente
+        page-range="@ViewBag.PageRange"> // Intervallo di pagine da visualizzare nella paginazione
+    </pagination>
+</div>

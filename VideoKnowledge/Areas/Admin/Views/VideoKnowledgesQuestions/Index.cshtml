@@ -1,0 +1,67 @@
+﻿@*
+    Per più informazioni sull'abilitazione di MVC per progetti vuoti, visitare https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+    ViewData["Title"] = "Video Knowledge Questions";
+}
+
+<h2>Video Knowledge Questions</h2>
+
+<form asp-action="Index">
+    <div class="form-group">
+        <label for="SelectedEvent">Select Event</label>
+        @Html.DropDownList("SelectedEvent", (SelectList)ViewBag.SelectedVideoKnowledgeContent, "Select an Event", new { @class = "form-control", @onchange = "this.form.submit();" })
+    </div>
+</form>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Question ID</th>
+            <th>Question Text</th>
+            <th>Event Name</th>
+            <th>Quiz Name</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr data-event-id="@item.EventId">
+                <td>@item.Id</td>
+                <td>@item.QuestionText</td>
+                <td>@item.Evnt.EvntQuizName</td>
+                <td class="quiz-name">Loading...</td> <!-- Qui verrà visualizzato il Quiz Name -->
+                <td>
+                    <a href="@Url.Action("QuizPlayer", "VideoKnowledgesQuestions", new { id = item.EventId })" class="btn btn-primary">Vai al Quiz</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<!-- Script per recuperare il nome del quiz e aggiornare la vista -->
+<script>
+    $(document).ready(function () {
+        // Scorri tutte le righe della tabella per recuperare l'ID dell'evento
+        $('tr[data-event-id]').each(function () {
+            var row = $(this);
+            var eventId = row.data('event-id');
+
+            // Chiamata AJAX per ottenere il nome del quiz
+            $.ajax({
+                url: '/api/Event/GetQuizName', // Assicurati che l'URL corrisponda all'endpoint del tuo controller
+                type: 'GET',
+                data: { eventId: eventId },
+                success: function (result) {
+                    // Aggiorna la cella con il nome del quiz restituito
+                    row.find('.quiz-name').text(result);
+                },
+                error: function () {
+                    // In caso di errore, imposta un testo di default
+                    row.find('.quiz-name').text('N/A');
+                }
+            });
+        });
+    });
+</script>

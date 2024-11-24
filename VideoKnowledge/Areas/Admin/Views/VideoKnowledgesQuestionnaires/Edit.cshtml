@@ -1,0 +1,128 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+@model VideoKnowledge.Models.Questionary
+
+@{
+        ViewData["Title"] = "Edit Questionary";
+}
+
+<h1>Edit VideoKnowledge</h1>
+
+<style>
+* {
+  box-sizing: border-box;
+}
+
+/* Create two unequal columns that floats next to each other */
+/* .column {
+  float: left;
+  padding: 10px;
+  height: 300px; /* Should be removed. Only for demonstration */
+/* }
+
+.left {
+  width: 40%;
+}
+
+.right {
+  width: 60%;
+} */
+
+/* Clear floats after the columns */
+.row:after {
+  content: "";
+  display: table;
+  clear: both;
+}
+</style>
+<div class="row">
+    @* <div class="col-md-4"> *@
+         <h2>Details</h2>
+        <form asp-action="Edit" enctype="multipart/form-data">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="TestName" class="control-label"></label>
+                <input asp-for="TestName" class="form-control" />
+                <span asp-validation-for="TestName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                    <button class="btn btn-primary">Edit</button>
+            </div>
+
+            <div>
+                <a asp-action="Index">Back to List</a>
+            </div>
+            
+        </form>
+</div>
+
+
+<div class="row">
+ <h2>Questions</h2>
+ <a asp-controller="VideoKnowledgesQuestions" asp-action="Create" asp-route-id="@this.Model.Id">Create New Question</a>
+
+    <table class="table">
+        <thead>
+                <tr>
+                        <th>QuestionText</th>
+                        <th>AnswerA</th>
+                        <th>AnswerB</th>
+                        <th>AnswerC</th>
+                        <th>AnswerC</th>
+                        <th>CorrectAnswer<</th>
+                        <th></th>
+                </tr>
+        </thead>
+        <tbody>
+            @if (Model.QuestionList != null)
+            {
+                @foreach (var item in Model.QuestionList)
+                {
+
+                    <tr>
+                        <td>
+                            @item.QuestionText
+                        </td>
+                        <td>
+                            @item.AnswerA
+                        </td>
+                        <td>
+                            @item.AnswerB
+                        </td>
+                        <td>
+                            @item.AnswerC
+                        </td>
+                        <td>
+                            @item.AnswerC
+                        </td>
+                        <td>
+                            @item.CorrectAnswer
+                        </td>
+
+                        <td>
+                            <a asp-controller="VideoKnowledgesQuestions" asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+                            <a asp-controller="VideoKnowledgesQuestions" asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                        </td>
+                    </tr>
+                }
+            }
+        </tbody>
+    </table>
+ </div>
+
+
+ @* @section Scripts { *@
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+}
+
+
+ @*    <div id="titleSection" class="container">
+        <div class="form-group">
+            <label asp-for="TestName" class="control-label"></label>
+            <textarea asp-for="TestName" class="form-control"></textarea>
+            <span asp-validation-for="TestName" class="text-danger"></span>
+    </div> *@

@@ -1,0 +1,299 @@
+﻿@model VideoKnowledge.Models.VideoKnowledgeEvent
+
+@{
+    ViewData["Title"] = "Create Event";
+}
+
+<h1>Create VideoKnowledge Event</h1>
+
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Create" method="post" enctype="multipart/form-data" id="eventForm">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+            <div class="form-group">
+                <label>Event Type</label>
+                <select asp-for="EventType" class="form-control" asp-items="ViewBag.EventType" onchange="Select()">
+                    <option value="0">Choose an Event type</option>
+                    <option value="1">Image</option>
+                    <option value="2">Quiz</option>
+                    <option value="3">Web Content</option>
+                    <option value="4">Uploaded Video</option>
+                    <option value="5">Web Video</option>
+                </select>
+                <span asp-validation-for="EventType" class="text-danger"></span>
+            </div>
+            <div id="UserVideoPauseEventDiv" class="form-group">
+                <label asp-for="UserVideoPauseEvent" class="control-label">User Pause Event</label>
+                <div class="custom-control custom-switch">
+                    <input type="checkbox" asp-for="UserVideoPauseEvent" class="custom-control-input" value="true" id="UserVideoPauseEvent"/>
+                    <input type="hidden" asp-for="UserVideoPauseEvent" value="false"/>
+                    <label class="custom-control-label" for="UserVideoPauseEvent"></label>
+                    <span asp-validation-for="UserVideoPauseEvent" class="text-danger"></span>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="EvntTimeStopinSec" class="control-label">Stop video at second</label>
+                <input asp-for="EvntTimeStopinSec" class="form-control" id="EvntTimeStopinSec" />
+                <input type="text" id="EvntTimeStopinSecDisplay" class="form-control" readonly style="display:none;" />
+                <span asp-validation-for="EvntTimeStopinSec" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="EvntTimerDuration" class="control-label">Event time duration</label>
+                <input asp-for="EvntTimerDuration" class="form-control" id="EvntTimerDuration" />
+                <input type="text" id="EvntTimerDurationDisplay" class="form-control" readonly style="display:none;" />
+                <span asp-validation-for="EvntTimerDuration" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="Description" class="control-label"></label>
+                <textarea asp-for="Description" class="form-control"></textarea>
+                <span asp-validation-for="Description" class="text-danger"></span>
+            </div>
+
+            <div id="EvntWebLinkDiv" class="form-group" style="display: none;">
+                <label asp-for="EvntWebLink" class="control-label"></label>
+                <textarea asp-for="EvntWebLink" id="EvntWebLink" class="form-control"></textarea>
+                <span asp-validation-for="EvntWebLink" class="text-danger"></span>
+            </div>
+
+            <div id="EvntImage" class="form-group" style="display: none;">
+                <label asp-for="EvntImageUpload" class="control-label">Upload Image</label>
+                <input asp-for="EvntImageUpload" class="form-control" type="file" id="EvntImageUpload" name="EvntImageUpload" style="display: block;" title="Upload Image">
+                <img id="imgpreview" class="pt-2" />
+                <span asp-validation-for="EvntImageUpload" class="text-danger"></span>
+            </div>
+
+            <div id="EvntVideo" class="form-group" style="display: none;">
+                <label asp-for="EvntVideoUpload" class="control-label">Upload Video</label>
+                <input asp-for="EvntVideoUpload" class="form-control" type="file" id="EvntVideoUpload" name="EvntVideoUpload" title="Upload Video">
+                <span asp-validation-for="EvntVideoUpload" class="text-danger"></span>
+            </div>
+
+            <div id="EvntWebVideoLinkDiv" class="form-group" style="display: none;">
+                <label asp-for="EvntWebVideoLink" class="control-label">Web Video Link</label>
+                <input asp-for="EvntWebVideoLink" id="EvntWebVideoLink" class="form-control" onchange="convertVideoLink()" placeholder="Enter Web Video Link">
+                <span asp-validation-for="EvntWebVideoLink" class="text-danger"></span>
+            </div>
+
+            <div id="EvntQuizNameDiv" class="form-group" style="display: none;">
+                <label asp-for="EvntQuizName" class="control-label"></label>
+                <input asp-for="EvntQuizName" class="form-control" />
+                <span asp-validation-for="EvntQuizName" class="text-danger"></span>
+            </div>
+
+            <div class="form-group d-flex justify-content-between">
+                <br />
+                <button class="btn btn-success" type="submit">Create</button>
+                <a href="javascript:history.go(-1)" class="btn btn-secondary">Back to Video Knowledge</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+   @*  <a href="javascript:history.go(-1)" class="btn btn-secondary">Back to Video Knowledge</a> *@
+    @* <a href="javascript:history.go(-1)">Back to VideoKnowledge</a> *@
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    <script>
+        $("#EvntImageUpload").change(function () {
+            readURL(this);
+        });
+
+        $("#EvntVideoUpload").change(function () {
+            readURL(this);
+        });
+
+        function Select() {
+            var select = document.getElementById("EventType");
+            var index = select.selectedIndex;
+            var text = select.options[index].text;
+
+            if (text == "Image") {
+                document.getElementById("EvntImage").style.display = 'block';
+                document.getElementById("EvntImageUpload").style.display = 'block';
+                document.getElementById("EvntQuizNameDiv").style.display = 'none';
+                document.getElementById("EvntWebLinkDiv").style.display = 'none';
+                document.getElementById("EvntVideo").style.display = 'none';
+                document.getElementById("EvntWebVideoLinkDiv").style.display = 'none';
+                // OnClickEvType();
+            } else if (text == "Quiz") {
+                document.getElementById("EvntImage").style.display = 'none';
+                document.getElementById("EvntImageUpload").style.display = 'none';
+                document.getElementById("EvntQuizNameDiv").style.display = 'block';
+                document.getElementById("EvntWebLinkDiv").style.display = 'none';
+                document.getElementById("EvntVideo").style.display = 'none';
+                document.getElementById("EvntWebVideoLinkDiv").style.display = 'none';
+                // document.getElementById("EvntTimerDuration").readOnly = false;
+
+                // document.getElementById("EvntTimerDuration").style.display = 'none';
+                // document.getElementById("EvntTimerDuration").value = ''; 
+                // document.getElementById("EvntTimerDurationDisplay").value = '';
+                // document.getElementById("EvntTimerDurationDisplay").style.display = '';
+                
+
+            } else if (text == "Web Content") {
+                document.getElementById("EvntImage").style.display = 'none';
+                document.getElementById("EvntImageUpload").style.display = 'none';
+                document.getElementById("EvntQuizNameDiv").style.display = 'none';
+                document.getElementById("EvntWebLinkDiv").style.display = 'block';
+                document.getElementById("EvntVideo").style.display = 'none';
+                document.getElementById("EvntWebVideoLinkDiv").style.display = 'none';
+                // OnClickEvType();
+            } else if (text == "Uploaded Video") {
+                document.getElementById("EvntImage").style.display = 'none';
+                document.getElementById("EvntImageUpload").style.display = 'none';
+                document.getElementById("EvntQuizNameDiv").style.display = 'none';
+                document.getElementById("EvntWebLinkDiv").style.display = 'none';
+                document.getElementById("EvntVideo").style.display = 'block';
+                document.getElementById("EvntWebVideoLinkDiv").style.display = 'none';
+                // OnClickEvType();
+            } else if (text == "Web Video") {
+                document.getElementById("EvntImage").style.display = 'none';
+                document.getElementById("EvntImageUpload").style.display = 'none';
+                document.getElementById("EvntQuizNameDiv").style.display = 'none';
+                document.getElementById("EvntWebLinkDiv").style.display = 'none';
+                document.getElementById("EvntVideo").style.display = 'none';
+                document.getElementById("EvntWebVideoLinkDiv").style.display = 'block';
+                // OnClickEvType(text);
+            } else {
+                document.getElementById("EvntImage").style.display = 'none';
+                document.getElementById("EvntImageUpload").style.display = 'none';
+                document.getElementById("EvntQuizNameDiv").style.display = 'none';
+                document.getElementById("EvntWebLinkDiv").style.display = 'none';
+                document.getElementById("EvntVideo").style.display = 'none';
+                document.getElementById("EvntWebVideoLinkDiv").style.display = 'none';
+                document.getElementById("EvntTimerDuration").style.display = 'none';
+                // document.getElementById("EvntTimerDurationDisplay").style.display = 'none';
+                
+            }
+            OnClickEvType(text);
+        }
+
+        function OnClickEvType(etype) {
+            var maxValue = 2147483647;
+
+            if (etype != "Quiz") {
+                // Se il tipo di evento NON è "Quiz", imposta i campi come readonly e mostra "On User Click"
+                document.getElementById("EvntTimerDuration").value = maxValue;
+                document.getElementById("EvntTimerDurationDisplay").value = 'On User Click';
+                document.getElementById("EvntTimerDuration").readOnly = true;
+                document.getElementById("EvntTimerDuration").style.display = 'none'; // Nasconde il campo modificabile
+                document.getElementById("EvntTimerDurationDisplay").style.display = 'block'; // Mostra il campo readonly
+            } else {
+                // Se il tipo di evento è "Quiz", mostra il campo come modificabile
+                document.getElementById("EvntTimerDuration").value = ''; // Resetta il valore
+                document.getElementById("EvntTimerDuration").readOnly = false; // Rende il campo modificabile
+                document.getElementById("EvntTimerDuration").style.display = 'block'; // Mostra il campo
+                document.getElementById("EvntTimerDurationDisplay").style.display = 'none'; // Nasconde il display readonly
+            }
+        }
+
+
+
+        $(document).ready(function () {
+            $('#eventForm').submit(function (event) {
+                if (!convertVideoLink()) {
+                    event.preventDefault();
+                }
+            });
+        });
+
+
+        document.addEventListener('DOMContentLoaded', function() {
+            var checkBox = document.getElementById("UserVideoPauseEvent");
+            var maxValue = 2147483647; // C# int.MaxValue
+
+            if (checkBox.checked) {
+                handleCheckboxChecked();
+            } else {
+                handleCheckboxUnchecked();
+            }
+        });
+
+        document.getElementById("UserVideoPauseEvent").addEventListener('change', function(event) {
+            if (event.target.checked) {
+                handleCheckboxChecked();
+            } else {
+                handleCheckboxUnchecked();
+            }
+        });
+
+        function handleCheckboxChecked() {
+            var maxValue = 2147483647; // C# int.MaxValue
+            console.log('Checkbox is checked');
+            document.getElementById("EvntTimeStopinSec").value = maxValue;
+            document.getElementById("EvntTimerDuration").value = maxValue;
+            document.getElementById("EvntTimeStopinSecDisplay").value = 'On User Pause';
+            document.getElementById("EvntTimerDurationDisplay").value = 'On User Pause';
+            document.getElementById("EvntTimeStopinSec").readOnly = true;
+            document.getElementById("EvntTimerDuration").readOnly = true;
+            document.getElementById("EvntTimeStopinSec").style.display = 'none';
+            document.getElementById("EvntTimerDuration").style.display = 'none';
+            document.getElementById("EvntTimeStopinSecDisplay").style.display = 'block';
+            document.getElementById("EvntTimerDurationDisplay").style.display = 'block';
+        }
+
+        function handleCheckboxUnchecked() {
+            console.log('Checkbox is not checked');
+            document.getElementById("EvntTimeStopinSec").value = ''; // Svuota il campo
+            document.getElementById("EvntTimerDuration").value = ''; // Svuota il campo
+            document.getElementById("EvntTimeStopinSec").readOnly = false;
+            document.getElementById("EvntTimerDuration").readOnly = false;
+            document.getElementById("EvntTimeStopinSec").style.display = 'block';
+            document.getElementById("EvntTimerDuration").style.display = 'block';
+            document.getElementById("EvntTimeStopinSecDisplay").style.display = 'none';
+            document.getElementById("EvntTimerDurationDisplay").style.display = 'none';
+        }
+
+        function convertVideoLink() {
+            console.log('convertVideoLink called');
+            var webVideoLink = document.getElementById("EvntWebVideoLink").value;
+            var embedLink;
+
+            if (webVideoLink) {
+                if (webVideoLink.includes('youtube.com/embed')) {
+                    embedLink = webVideoLink;
+                }else if (webVideoLink.includes('youtube.com/shorts')){
+                     var videoId = webVideoLink.split('shorts/')[1];
+                     embedLink= 'https://www.youtube.com/embed/' + videoId;
+                } else if (webVideoLink.includes('youtube.com')) {
+                    var videoId = webVideoLink.split('v=')[1].split('&')[0];
+                    embedLink = 'https://www.youtube.com/embed/' + videoId;
+                } else if (webVideoLink.includes('player.vimeo.com/video')) {
+                    embedLink = webVideoLink;
+                } else if (webVideoLink.includes('vimeo.com')) {
+                    var videoId = webVideoLink.split('.com/')[1];
+                    embedLink = 'https://player.vimeo.com/video/' + videoId;
+                } else if (webVideoLink.includes('video.google.com/googleplayer.swf')) {
+                    embedLink = webVideoLink;
+                } else if (webVideoLink.includes('video.google.com')) {
+                    var videoId = webVideoLink.split('.com/videoplay?docid=')[1].split('&')[0];
+                    embedLink = 'https://video.google.com/googleplayer.swf?docid=' + videoId;
+                } else if (webVideoLink.includes('www.dailymotion.com/embed/video')) {
+                    embedLink = webVideoLink;
+                } else if (webVideoLink.includes('dailymotion.com')) {
+                    var videoId = webVideoLink.split('.com/video/')[1].split('?')[0];
+                    embedLink = 'https://www.dailymotion.com/embed/video/' + videoId;
+                } else {
+                    console.log('Link non riconosciuto');
+                    return false; // Prevenire l'invio del form se il link non è valido
+                }
+                console.log('Link per l\'incorporamento: ' + embedLink);
+                document.getElementById('EvntWebVideoLink').value = embedLink;
+            }
+            return true;
+        }
+
+        function validateForm(event) {
+            return convertVideoLink();
+        }
+    </script>
+}

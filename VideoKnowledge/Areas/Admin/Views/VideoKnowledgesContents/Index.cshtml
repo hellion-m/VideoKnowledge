@@ -1,0 +1,105 @@
+﻿@model IEnumerable<VideoKnowledgeContent>
+
+@{
+    ViewData["Title"] = "My Video Knowledges";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>My Video Knowledges</h1>
+<p>
+    <a class="btn btn-success" asp-action="Create">Create New</a>
+</p>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Description</th>
+            <th>Category</th>
+            <th>Cover</th>
+            <th>VideoLink</th>
+            <th></th>
+        </tr>
+    </thead>
+
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.Name</td>
+                @* <td>@item.Description</td> *@
+                <td class="description-column">
+                    @if (item.Description.Length > 50)
+                    {
+                        <span>@item.Description.Substring(0,50)...</span>
+                        <a href="#" class="read-more-link" data-description="@item.Description">read all</a>
+                    }
+                    else
+                    {
+                        <span>@item.Description</span>
+                    }
+                </td>
+
+                <td>@item.Category.Name</td>
+                <td>
+                    <img src="/media/imagesOfKnowledges/@item.Image" class="preview-image" alt="@item.Name" />
+                </td>
+                <td>
+                    @if (item.VideoLink != null)
+                    {
+                        <video id="myvid" controls class="preview-video">
+                            <source src="~/media/videosOfKnowledges/@item.VideoLink" type="video/mp4" alt="@item.Name" />
+                        </video>
+                    }
+                    else if (item.WebVideoLink != null)
+                    {
+                        <iframe id="videoPreview" class="preview-video" src="@item.WebVideoLink" frameborder="0"></iframe>
+                    }
+                </td>
+                <td>
+                    <div class="d-flex flex-wrap justify-content-between">
+                        <a class="btn btn-primary btn-sm" asp-action="Player" asp-route-id="@item.Id">Play</a>
+                        <a class="btn btn-warning btn-sm" asp-action="Edit" asp-route-id="@item.Id">Edit</a>
+                        <a class="btn btn-danger btn-sm confirmDeletion" asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                    </div>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<div id="description-popup" class="description-popup"></div>
+
+
+<div class="d-flex w-100 justify-content-center">
+    <pagination page-count="@ViewBag.TotalPages"
+                page-target="/admin/VideoKnowledgesContents/@ViewBag.CategorySlug"
+                page-number="@ViewBag.PageNumber"
+                page-range="@ViewBag.PageRange">
+    </pagination>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        var popup = document.getElementById('description-popup');
+
+        document.querySelectorAll('.read-more-link').forEach(function (link) {
+            link.addEventListener('mouseover', function (e) {
+                var fullDescription = link.getAttribute('data-description');
+                popup.innerText = fullDescription;
+                popup.style.display = 'block';
+                popup.style.top = (e.pageY + 10) + 'px';
+                popup.style.left = (e.pageX + 10) + 'px';
+            });
+
+            link.addEventListener('mousemove', function (e) {
+                popup.style.top = (e.pageY + 10) + 'px';
+                popup.style.left = (e.pageX + 10) + 'px';
+            });
+
+            link.addEventListener('mouseout', function () {
+                popup.style.display = 'none';
+            });
+        });
+    });
+</script>

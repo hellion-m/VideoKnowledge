@@ -1,0 +1,48 @@
+﻿@model UserCompletedQuizzesViewModel
+
+@{
+    ViewData["Title"] = "Completed Quizzes";
+}
+
+<h1>Completed Quizzes</h1>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Video Name</th>
+            <th>Cover</th>
+            <th>Quiz Name</th>
+            <th>Quiz Result</th>
+            <th>Correct Answers</th>
+            <th></th>
+        </tr>
+    </thead>
+
+    <tbody>
+        @foreach (var quizResult in Model.UserTestResults)
+        {
+            var videoContent = Model.VideoKnowledgeContents.FirstOrDefault(vkc => vkc.Id == quizResult.VidKnowId);
+            <tr>
+                <td>
+                    @videoContent?.Name
+                </td>
+                <td>
+                    @* definizione path su cui leggere le immagini *@
+                    <img src="/media/imagesOfKnowledges/@videoContent.Image" width="200" height="200" alt="" />
+                </td>
+                <td>
+                    @quizResult.Name
+                </td>
+                <td>
+                    @quizResult.QuizResult
+                </td>
+                <td>
+                    @quizResult.QuestionsResult
+                </td>
+                <td>
+                    <a class="btn btn-addList" asp-area="Admin" asp-controller="VideoKnowledgesContents" asp-action="Player" asp-route-id="@quizResult.VidKnowId">Replay</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
