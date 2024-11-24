@@ -1,0 +1,48 @@
+    // Definisci gli istanti di tempo per gli eventi (in secondi)
+    // var select = document.getElementById("EvntList");
+    // var a = @Model.EventList.Meetings.Where(c => c.Status == "Done").Count();
+
+    //  var a = @Model.EventList;
+
+    //  switch (a.EventType) {
+
+    //  }
+
+
+
+    // const eventTimes = [10, 20, 30]; // Esempio: eventi a 10s, 20s e 30s
+ 
+    // const video = document.getElementById('myVideo');
+ 
+    // // Aggiungi un listener per l'evento timeupdate
+    // video.addEventListener('timeupdate', function() {
+    //     const currentTime = video.currentTime;
+ 
+    //     // Verifica se l'istante di tempo corrente corrisponde a un evento
+    //     if (eventTimes.includes(Math.floor(currentTime))) {
+    //         // Esegui l'azione desiderata per l'evento
+    //         // Ad esempio, mostra un'immagine, apri un link o carica un altro video
+    //         console.log('Evento verificato a ' + currentTime + ' secondi.');
+    //         // Puoi sostituire il console.log con altre azioni specifiche
+    //         // come mostrare un'immagine o aprire un link.
+    //         // Per bloccare la riproduzione, puoi usare: video.pause();
+    //     }
+    // });
+    // const eventi = @Model.EventList;
+
+
+
+
+    @* <div class="col-md-4"> *@
+ @*    <div class="column left"> *@
+@*     <video id="videoplay" controls width="300">
+            <source src="~/media/videosOfKnowledges/@Model.VideoLink" type="video/mp4" alt="" />
+        </video>
+ *@
+
+        setTimeout(hideDiv, 9000);
+        function hideDiv() {
+        $("#video").fadeOut("slow");
+        }
+
+
