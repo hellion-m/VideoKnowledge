@@ -1,0 +1,133 @@
+is_global = true
+build_property.TargetFramework = net6.0
+build_property.TargetPlatformMinVersion = 
+build_property.UsingMicrosoftNETSdkWeb = true
+build_property.ProjectTypeGuids = 
+build_property.InvariantGlobalization = 
+build_property.PlatformNeutralAssembly = 
+build_property.EnforceExtendedAnalyzerRules = 
+build_property._SupportedPlatformList = Linux,macOS,Windows
+build_property.RootNamespace = VideoKnowledge
+build_property.RootNamespace = VideoKnowledge
+build_property.ProjectDir = C:\Users\Marco\Documents\VideoKnowledge\VideoKnowledge\
+build_property.RazorLangVersion = 6.0
+build_property.SupportLocalizedComponentNames = 
+build_property.GenerateRazorMetadataSourceChecksumAttributes = 
+build_property.MSBuildProjectDirectory = C:\Users\Marco\Documents\VideoKnowledge\VideoKnowledge
+build_property._RazorSourceGeneratorDebug = 
+
+[C:/Users/Marco/Documents/VideoKnowledge/VideoKnowledge/Areas/Admin/Views/VideoKnowledgesContents/Create.cshtml]
+build_metadata.AdditionalFiles.TargetPath = QXJlYXNcQWRtaW5cVmlld3NcVmlkZW9Lbm93bGVkZ2VzQ29udGVudHNcQ3JlYXRlLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Marco/Documents/VideoKnowledge/VideoKnowledge/Areas/Admin/Views/VideoKnowledgesContents/Edit.cshtml]
+build_metadata.AdditionalFiles.TargetPath = QXJlYXNcQWRtaW5cVmlld3NcVmlkZW9Lbm93bGVkZ2VzQ29udGVudHNcRWRpdC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Marco/Documents/VideoKnowledge/VideoKnowledge/Areas/Admin/Views/VideoKnowledgesContents/FavoritesList.cshtml]
+build_metadata.AdditionalFiles.TargetPath = QXJlYXNcQWRtaW5cVmlld3NcVmlkZW9Lbm93bGVkZ2VzQ29udGVudHNcRmF2b3JpdGVzTGlzdC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Marco/Documents/VideoKnowledge/VideoKnowledge/Areas/Admin/Views/VideoKnowledgesContents/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = QXJlYXNcQWRtaW5cVmlld3NcVmlkZW9Lbm93bGVkZ2VzQ29udGVudHNcSW5kZXguY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Marco/Documents/VideoKnowledge/VideoKnowledge/Areas/Admin/Views/VideoKnowledgesContents/Player.cshtml]
+build_metadata.AdditionalFiles.TargetPath = QXJlYXNcQWRtaW5cVmlld3NcVmlkZW9Lbm93bGVkZ2VzQ29udGVudHNcUGxheWVyLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Marco/Documents/VideoKnowledge/VideoKnowledge/Areas/Admin/Views/VideoKnowledgesEvents/Create.cshtml]
+build_metadata.AdditionalFiles.TargetPath = QXJlYXNcQWRtaW5cVmlld3NcVmlkZW9Lbm93bGVkZ2VzRXZlbnRzXENyZWF0ZS5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Marco/Documents/VideoKnowledge/VideoKnowledge/Areas/Admin/Views/VideoKnowledgesEvents/Edit.cshtml]
+build_metadata.AdditionalFiles.TargetPath = QXJlYXNcQWRtaW5cVmlld3NcVmlkZW9Lbm93bGVkZ2VzRXZlbnRzXEVkaXQuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Marco/Documents/VideoKnowledge/VideoKnowledge/Areas/Admin/Views/VideoKnowledgesQuestions/Create.cshtml]
+build_metadata.AdditionalFiles.TargetPath = QXJlYXNcQWRtaW5cVmlld3NcVmlkZW9Lbm93bGVkZ2VzUXVlc3Rpb25zXENyZWF0ZS5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Marco/Documents/VideoKnowledge/VideoKnowledge/Areas/Admin/Views/VideoKnowledgesQuestions/Edit.cshtml]
+build_metadata.AdditionalFiles.TargetPath = QXJlYXNcQWRtaW5cVmlld3NcVmlkZW9Lbm93bGVkZ2VzUXVlc3Rpb25zXEVkaXQuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Marco/Documents/VideoKnowledge/VideoKnowledge/Areas/Admin/Views/VideoKnowledgesQuestions/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = QXJlYXNcQWRtaW5cVmlld3NcVmlkZW9Lbm93bGVkZ2VzUXVlc3Rpb25zXEluZGV4LmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Marco/Documents/VideoKnowledge/VideoKnowledge/Areas/Admin/Views/VideoKnowledgesQuestions/QuizPlayer.cshtml]
+build_metadata.AdditionalFiles.TargetPath = QXJlYXNcQWRtaW5cVmlld3NcVmlkZW9Lbm93bGVkZ2VzUXVlc3Rpb25zXFF1aXpQbGF5ZXIuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Marco/Documents/VideoKnowledge/VideoKnowledge/Areas/Admin/Views/VideoKnowledgesQuestions/UserQuizResults.cshtml]
+build_metadata.AdditionalFiles.TargetPath = QXJlYXNcQWRtaW5cVmlld3NcVmlkZW9Lbm93bGVkZ2VzUXVlc3Rpb25zXFVzZXJRdWl6UmVzdWx0cy5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Marco/Documents/VideoKnowledge/VideoKnowledge/Areas/Admin/Views/_ViewImports.cshtml]
+build_metadata.AdditionalFiles.TargetPath = QXJlYXNcQWRtaW5cVmlld3NcX1ZpZXdJbXBvcnRzLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Marco/Documents/VideoKnowledge/VideoKnowledge/Areas/Admin/Views/_ViewStart.cshtml]
+build_metadata.AdditionalFiles.TargetPath = QXJlYXNcQWRtaW5cVmlld3NcX1ZpZXdTdGFydC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Marco/Documents/VideoKnowledge/VideoKnowledge/Views/Account/Create.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWNjb3VudFxDcmVhdGUuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Marco/Documents/VideoKnowledge/VideoKnowledge/Views/Account/Login.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWNjb3VudFxMb2dpbi5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Marco/Documents/VideoKnowledge/VideoKnowledge/Views/Home/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9tZVxJbmRleC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Marco/Documents/VideoKnowledge/VideoKnowledge/Views/Home/Privacy.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9tZVxQcml2YWN5LmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Marco/Documents/VideoKnowledge/VideoKnowledge/Views/MyList/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcTXlMaXN0XEluZGV4LmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Marco/Documents/VideoKnowledge/VideoKnowledge/Views/Shared/Components/Categories/Default.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXENvbXBvbmVudHNcQ2F0ZWdvcmllc1xEZWZhdWx0LmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Marco/Documents/VideoKnowledge/VideoKnowledge/Views/Shared/Components/SmallMyList/Default.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXENvbXBvbmVudHNcU21hbGxNeUxpc3RcRGVmYXVsdC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Marco/Documents/VideoKnowledge/VideoKnowledge/Views/Shared/Error.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXEVycm9yLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Marco/Documents/VideoKnowledge/VideoKnowledge/Views/Shared/_NotificationPartial.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXF9Ob3RpZmljYXRpb25QYXJ0aWFsLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Marco/Documents/VideoKnowledge/VideoKnowledge/Views/Shared/_PlayerLayout.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXF9QbGF5ZXJMYXlvdXQuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Marco/Documents/VideoKnowledge/VideoKnowledge/Views/Shared/_ValidationScriptsPartial.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXF9WYWxpZGF0aW9uU2NyaXB0c1BhcnRpYWwuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Marco/Documents/VideoKnowledge/VideoKnowledge/Views/VideoKnowledgesContents/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVmlkZW9Lbm93bGVkZ2VzQ29udGVudHNcSW5kZXguY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Marco/Documents/VideoKnowledge/VideoKnowledge/Views/_ViewImports.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcX1ZpZXdJbXBvcnRzLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Marco/Documents/VideoKnowledge/VideoKnowledge/Views/_ViewStart.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcX1ZpZXdTdGFydC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Marco/Documents/VideoKnowledge/VideoKnowledge/Views/Shared/_Layout.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXF9MYXlvdXQuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = b-v2xk7obf30
